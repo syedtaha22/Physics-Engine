@@ -4,11 +4,12 @@
 #define FLAT_PHYSICS_CORE_HPP
 
 // Include FlatPhysics core files
-#include "FlatBody.hpp"
-#include "FlatConverter.hpp"
-#include "FlatMath.hpp"
-#include "FlatVector.hpp"
-#include "FlatWorld.hpp"
-
+#include "headers/FlatBody.hpp"
+#include "headers/FlatConverter.hpp"
+#include "headers/FlatMath.hpp"
+#include "headers/FlatVector.hpp"
+#include "headers/FlatWorld.hpp"
+#include "headers/FlatCollisions.hpp"
+#include "headers/FlatTransformation.hpp"
 
 #endif // FLAT_PHYSICS_CORE_HPP
