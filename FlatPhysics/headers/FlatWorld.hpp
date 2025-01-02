@@ -1,13 +1,11 @@
 /*
 
-    Represent the world
+    Represents the world
 
 */
 
-#ifndef FLATPHYSICS_FLATWORLD_HPP
-#define FLATPHYSICS_FLATWORLD_HPP
-
-
+#ifndef FLAT_WORLD_HPP
+#define FLAT_WORLD_HPP
 
 namespace FlatPhysics {
 
@@ -19,10 +17,6 @@ namespace FlatPhysics {
 
         static constexpr float minDensity = 0.5f; // gm/cm^3
         static constexpr float maxDensity = 21.45f; // gm/cm^3
-
-
-
-
     };
 
 
@@ -30,9 +24,4 @@ namespace FlatPhysics {
 } // namespace FlatPhysics
 
 
-
-
-
-
-
-#endif // FLATPHYSICS_FLATWORLD_HPP
+#endif // FLAT_WORLD_HPP
