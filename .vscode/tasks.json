@@ -12,7 +12,12 @@
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
                 "-lsfml-graphics",
                 "-lsfml-window",
-                "-lsfml-system"
+                "-lsfml-system",
+                "FlatPhysics/src/FlatBody.cpp",
+                "FlatPhysics/src/FlatCollisions.cpp",
+                "FlatPhysics/src/FlatMath.cpp",
+                "FlatPhysics/src/FlatTransformation.cpp",
+                "FlatPhysics/src/FlatVector.cpp",
             ],
             "options": {
                 "cwd": "${fileDirname}"
