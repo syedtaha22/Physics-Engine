@@ -19,6 +19,9 @@ namespace Flat {
         Flat::Color bgColor;
         float zoomLevel;
 
+        // Store last frame time
+        float lastFrameTime = 0.0f;
+
     public:
 
 
@@ -105,7 +108,7 @@ namespace Flat {
             draw(circle);
         }
 
-        void drawCircleFilled(float radius, sf::Vector2f position, Flat::Color fillColor = Flat::Color::Transparent)
+        void drawCircleFilled(float radius, sf::Vector2f position, Flat::Color fillColor)
         {
 
             Flat::Circle circle(radius, position.x, position.y, Flat::Color::Transparent, 0, fillColor);
@@ -119,12 +122,26 @@ namespace Flat {
             draw(rectangle);
         }
 
-        void drawRectangleFilled(float width, float height, sf::Vector2f position,
-            Flat::Color fillColor = Flat::Color::Transparent)
+        void drawRectangleFilled(float width, float height, sf::Vector2f position, Flat::Color fillColor)
         {
             Flat::Rectangle rectangle(width, height, position.x, position.y, Flat::Color::Transparent, 0, fillColor);
             draw(rectangle);
         }
+
+        void drawPolygonWithBorder(std::vector<sf::Vector2f> vertices, Flat::Color borderColor = Flat::Color::Transparent,
+            float borderThickness = 0, Flat::Color fillColor = Flat::Color::Transparent)
+        {
+            Flat::Polygon polygon(vertices, borderColor, borderThickness, fillColor);
+            draw(polygon);
+        }
+
+        void drawPolygonFilled(std::vector<sf::Vector2f> vertices, Flat::Color color) {
+            Flat::Polygon polygon(vertices, Flat::Color::Transparent, 0, color);
+            draw(polygon);
+        }
+
+
+
 
         void zoom(float factor) {
             zoomLevel *= factor;
@@ -151,6 +168,26 @@ namespace Flat {
             default:
                 return clock.getElapsedTime().asSeconds();
             }
+        }
+
+        float getElapsedTimeSinceLastFrame(TimeUnit unit = TimeUnit::Seconds) const {
+            float currentTime = 0.0f;
+
+            switch (unit) {
+            case TimeUnit::Milliseconds:
+                currentTime = clock.getElapsedTime().asMilliseconds();
+                break;
+            case TimeUnit::Seconds:
+            default:
+                currentTime = clock.getElapsedTime().asSeconds();
+                break;
+            }
+
+            return currentTime - lastFrameTime; // Calculate delta time without updating lastFrameTime
+        }
+
+        void update() {
+            lastFrameTime = clock.getElapsedTime().asSeconds(); // Update last frame time
         }
 
         ~Window() {
