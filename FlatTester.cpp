@@ -1,14 +1,14 @@
-#include "Flat/core.hpp"
-
-// Include  FlatPhysics core
-#include "FlatPhysics/core.hpp"
-
-// Include Random
-#include "Random.hpp"
-
 #include <vector>
 #include <exception>
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
+#include "Flat/core.hpp" // Include Flat core for graphics
+#include "FlatPhysics/core.hpp" // Include  FlatPhysics core
+#include "Random.hpp" // Include Random
+
+#
 
 class Game {
     Flat::Window window;
@@ -16,8 +16,10 @@ class Game {
     std::vector<FlatPhysics::FlatBody*> bodies;
     std::vector<Flat::Color> colors;
 
+    std::vector<sf::Vector2f> vertexBuffer;
+
 public:
-    Game() : window(1280, 768, "Physics Engine from Scratch", Flat::Color("#333333"), 0.08f, 32) {
+    Game() : window(1280, 768, "Physics Engine from Scratch", Flat::Color("#333333"), 0.05f, 32) {
 
         bodies.resize(numBodies);
         colors.resize(numBodies);
@@ -36,6 +38,7 @@ public:
             int type = Random::randomInt(0, 1);
 
             type = 0;
+            type = 1;
 
             float x = Random::randomFloat(left + padding, right - padding);
             float y = Random::randomFloat(top + padding, bottom - padding);
@@ -48,7 +51,7 @@ public:
 
             }
             else if (type == (int)FlatPhysics::ShapeType::Box) {
-                if (!FlatPhysics::FlatBody::createBoxBody(3.0f, 3.0f, FlatPhysics::FlatVector(x, y), 2, false, 0.1f, bodies[i])) {
+                if (!FlatPhysics::FlatBody::createBoxBody(2.0f, 2.0f, FlatPhysics::FlatVector(x, y), 2, false, 0.1f, bodies[i])) {
                     // Throw error
                     throw std::runtime_error("Error creating box body");
                 }
@@ -83,7 +86,9 @@ public:
 
                 float dx = 0;
                 float dy = 0;
-                float speed = 0.15f;
+                float speed = 4.0f;
+
+                //std::cout << "Key Pressed" << std::endl;
 
 
                 if (Flat::Keyboard::isKeyPressed(Flat::Key::Left)) dx = -speed;
@@ -93,14 +98,48 @@ public:
 
                 if (dx != 0 || dy != 0) {
                     FlatPhysics::FlatVector direction(dx, dy);
-                    FlatPhysics::FlatMath::normalize(direction);
+                    FlatPhysics::FlatMath::Normalize(direction);
 
-                    FlatPhysics::FlatVector velocity = direction * speed * window.getElapsedTime(Flat::TimeUnit::Seconds);
+                    FlatPhysics::FlatVector velocity = direction * speed * window.getElapsedTimeSinceLastFrame(Flat::TimeUnit::Seconds);
                     bodies[0]->move(velocity);
                 }
 
             }
         }
+
+        // Loop over all the bodies
+        for (size_t i = 0; i < numBodies; i++) {
+            FlatPhysics::FlatBody* body = bodies[i];
+            body->rotate(M_PI / 2.0f * window.getElapsedTimeSinceLastFrame(Flat::TimeUnit::Seconds));
+        }
+
+#if false
+        // Loop through all the bodies
+        for (size_t i = 0; i < numBodies - 1; i++) {
+
+            FlatPhysics::FlatBody* bodyA = bodies[i];
+
+            for (size_t j = i + 1; j < numBodies; j++) {
+                FlatPhysics::FlatBody* bodyB = bodies[j];
+                FlatPhysics::FlatVector normal;
+                float depth;
+
+                if (FlatPhysics::FlatCollisions::circleCircleCollision(
+                    bodyA->getPosition(), bodyA->radius,
+                    bodyB->getPosition(), bodyB->radius,
+                    normal, depth)) {
+
+                    // Move the bodies apart
+                    bodyA->move(-normal * (depth / 2.0f));
+                    bodyB->move(normal * (depth / 2.0f));
+                }
+            }
+        }
+#endif
+
+        window.update();
+
+
     }
 
 
@@ -110,14 +149,16 @@ public:
         for (size_t i = 0; i < numBodies; i++) {
             FlatPhysics::FlatBody* body = bodies[i];
             // Get the sf position
-            sf::Vector2f pos = FlatPhysics::FlatConverter::toSFML(body->getPosition());
+            sf::Vector2f pos = FlatPhysics::FlatConverter::toVector2f(body->getPosition());
 
             // Check if the body is a circle
             if (body->shapeType == FlatPhysics::ShapeType::Circle) {
                 window.drawCircleWithBorder(body->radius, pos, Flat::Color::White, 0.1, colors[i]);
             }
             else if (body->shapeType == FlatPhysics::ShapeType::Box) {
-                window.drawRectangleFilled(body->width, body->height, pos, Flat::Color::Red);
+                FlatPhysics::FlatConverter::toVector2fArray(body->getTransformedVertices(), body->numVertices, vertexBuffer);
+
+                window.drawPolygonWithBorder(vertexBuffer, Flat::Color::White, 0.1, colors[i]);
             }
 
         }
