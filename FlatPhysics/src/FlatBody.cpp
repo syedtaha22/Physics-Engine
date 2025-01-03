@@ -135,6 +135,11 @@ void FlatPhysics::FlatBody::rotate(float amount) {
     transformedUpdateRequired = true;
 }
 
+void FlatPhysics::FlatBody::step(float time) {
+    position += velocity * time;
+    rotation += angularVelocity * time;
+}
+
 std::vector<FlatPhysics::FlatVector> FlatPhysics::FlatBody::getTransformedVertices() {
     if (transformedUpdateRequired) {
         // Make a transformation object

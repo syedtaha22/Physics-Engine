@@ -77,6 +77,8 @@ namespace FlatPhysics {
 
         void rotate(float amount);
 
+        void step(float time);
+
         std::vector<FlatVector> getTransformedVertices();
 
     };
