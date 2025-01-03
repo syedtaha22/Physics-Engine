@@ -18,6 +18,7 @@
                 "${workspaceFolder}/FlatPhysics/src/FlatMath.cpp",
                 "${workspaceFolder}/FlatPhysics/src/FlatTransformation.cpp",
                 "${workspaceFolder}/FlatPhysics/src/FlatVector.cpp",
+                "${workspaceFolder}/FlatPhysics/src/FlatWorld.cpp",
             ],
             "options": {
                 "cwd": "${fileDirname}"
