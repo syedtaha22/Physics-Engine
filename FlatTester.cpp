@@ -12,7 +12,9 @@
 class Game {
     Flat::Window window;
     int numBodies = 10;
-    std::vector<FlatPhysics::FlatBody*> bodies;
+
+    FlatPhysics::FlatWorld world;
+
     std::vector<Flat::Color> colors;
     std::vector<Flat::Color> outlineColors;
 
@@ -21,7 +23,6 @@ class Game {
 public:
     Game() : window(1280, 768, "Physics Engine from Scratch", Flat::Color("#333333"), 5.0f, 32) {
 
-        bodies.resize(numBodies);
         colors.resize(numBodies);
 
         // Get the camera extent
@@ -31,12 +32,14 @@ public:
 
         // Make a list of bodies
         const int numBodies = 10;
-        bodies.resize(numBodies);
+
         colors.resize(numBodies);  // Colors for the bodies
         outlineColors.resize(numBodies); // Outline colors for the bodies
 
         for (int i = 0;i < numBodies; i++) {
             int type = Random::randomInt(0, 1);
+
+            FlatPhysics::FlatBody* body = nullptr;
 
             // type = (int)FlatPhysics::ShapeType::Circle;
             // type = (int)FlatPhysics::ShapeType::Box;
@@ -46,14 +49,14 @@ public:
 
 
             if (type == (int)FlatPhysics::ShapeType::Circle) {
-                if (!FlatPhysics::FlatBody::createCircleBody(1.0f, FlatPhysics::FlatVector(x, y), 2, false, 0.1f, bodies[i])) {
+                if (!FlatPhysics::FlatBody::createCircleBody(1.0f, FlatPhysics::FlatVector(x, y), 2, false, 0.1f, body)) {
                     // Throw error
                     throw std::runtime_error("Error creating circle body");
                 }
 
             }
             else if (type == (int)FlatPhysics::ShapeType::Box) {
-                if (!FlatPhysics::FlatBody::createBoxBody(2.0f, 2.0f, FlatPhysics::FlatVector(x, y), 2, false, 0.1f, bodies[i])) {
+                if (!FlatPhysics::FlatBody::createBoxBody(2.0f, 2.0f, FlatPhysics::FlatVector(x, y), 2, false, 0.1f, body)) {
                     // Throw error
                     throw std::runtime_error("Error creating box body");
                 }
@@ -62,6 +65,9 @@ public:
                 // Throw error
                 throw std::runtime_error("Invalid shape type");
             }
+
+            // Add the body to the world
+            world.addBody(body);
 
             // Assign a random color
             colors[i] = Random::randomColor();
@@ -93,6 +99,12 @@ public:
 
                 //std::cout << "Key Pressed" << std::endl;
 
+                FlatPhysics::FlatBody* body = nullptr;
+
+                if (!world.getBody(0, body)) {
+                    throw std::runtime_error("Error getting body");
+                }
+
 
                 if (Flat::Keyboard::isKeyPressed(Flat::Key::Left)) dx = -speed;
                 if (Flat::Keyboard::isKeyPressed(Flat::Key::Right)) dx = speed;
@@ -103,97 +115,18 @@ public:
                     FlatPhysics::FlatVector direction(dx, dy);
                     FlatPhysics::FlatMath::Normalize(direction);
 
+
+
                     FlatPhysics::FlatVector velocity = direction * speed * window.getElapsedTimeSinceLastFrame(Flat::TimeUnit::Seconds);
-                    bodies[0]->move(velocity);
+                    body->move(velocity);
                 }
 
             }
         }
 
-        // Loop over all the bodies
-        for (size_t i = 0; i < numBodies; i++) {
-            //FlatPhysics::FlatBody* body = bodies[i];
-            //body->rotate(M_PI / 2.0f * window.getElapsedTimeSinceLastFrame(Flat::TimeUnit::Seconds));
-            outlineColors[i] = Flat::Color::White;
-        }
-
-        // Loop through all the bodies
-        for (size_t i = 0; i < numBodies - 1; i++) {
-
-            FlatPhysics::FlatBody* bodyA = bodies[i];
-
-            for (size_t j = i + 1; j < numBodies; j++) {
-                FlatPhysics::FlatBody* bodyB = bodies[j];
-                FlatPhysics::FlatVector normal;
-                float depth;
-
-
-                if (bodyA->shapeType == FlatPhysics::ShapeType::Circle &&
-                    bodyB->shapeType == FlatPhysics::ShapeType::Box) {
-
-                    if (FlatPhysics::FlatCollisions::circlePolygonCollision(
-                        bodyA->getPosition(), bodyA->radius,
-                        bodyB->getTransformedVertices(), normal, depth)) {
-
-                        // Set the outline colors to red (collision detected
-                        outlineColors[i] = Flat::Color::Red;
-                        outlineColors[j] = Flat::Color::Red;
-                        // Move the bodies apart
-                        bodyA->move(-normal * (depth / 2.0f));
-                        bodyB->move(normal * (depth / 2.0f));
-                    }
-
-                }
-                else if (bodyB->shapeType == FlatPhysics::ShapeType::Circle &&
-                    bodyA->shapeType == FlatPhysics::ShapeType::Box) {
-
-                    if (FlatPhysics::FlatCollisions::circlePolygonCollision(
-                        bodyB->getPosition(), bodyB->radius,
-                        bodyA->getTransformedVertices(), normal, depth)) {
-
-                        // Set the outline colors to red (collision detected
-                        outlineColors[i] = Flat::Color::Red;
-                        outlineColors[j] = Flat::Color::Red;
-                        // Move the bodies apart
-                        bodyA->move(normal * (depth / 2.0f));
-                        bodyB->move(-normal * (depth / 2.0f));
-                    }
-
-                }
-
-
-#if false
-                if (FlatPhysics::FlatCollisions::polygonPolygonCollision(
-                    bodyA->getTransformedVertices(),
-                    bodyB->getTransformedVertices(),
-                    normal, depth)) {
-
-                    // Set the outline colors to red (collision detected
-                    outlineColors[i] = Flat::Color::Red;
-                    outlineColors[j] = Flat::Color::Red;
-                    // Move the bodies apart
-                    bodyA->move(-normal * (depth / 2.0f));
-                    bodyB->move(normal * (depth / 2.0f));
-                }
-
-
-
-                if (FlatPhysics::FlatCollisions::circleCircleCollision(
-                    bodyA->getPosition(), bodyA->radius,
-                    bodyB->getPosition(), bodyB->radius,
-                    normal, depth)) {
-
-                    // Move the bodies apart
-                    bodyA->move(-normal * (depth / 2.0f));
-                    bodyB->move(normal * (depth / 2.0f));
-                }
-#endif
-            }
-        }
+        world.step(window.getElapsedTimeSinceLastFrame(Flat::TimeUnit::Seconds));
 
         window.update();
-
-
     }
 
 
@@ -201,7 +134,13 @@ public:
         window.clear();
 
         for (size_t i = 0; i < numBodies; i++) {
-            FlatPhysics::FlatBody* body = bodies[i];
+            FlatPhysics::FlatBody* body = nullptr;
+
+            if (!world.getBody(i, body)) {
+                throw std::runtime_error("Error getting body at index " + std::to_string(i));
+            }
+
+
             // Get the sf position
             sf::Vector2f pos = FlatPhysics::FlatConverter::toVector2f(body->getPosition());
 
