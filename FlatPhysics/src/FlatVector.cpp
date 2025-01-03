@@ -10,7 +10,6 @@ using std::to_string;
 FlatPhysics::FlatVector FlatPhysics::FlatVector::Zero = FlatVector(0, 0);
 
 
-FlatPhysics::FlatVector::FlatVector() : x(0), y(0) {}
 FlatPhysics::FlatVector::FlatVector(float x, float y) : x(x), y(y) {}
 
 FlatPhysics::FlatVector FlatPhysics::FlatVector::operator+(const FlatVector& other) const {

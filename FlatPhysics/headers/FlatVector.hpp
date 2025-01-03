@@ -19,8 +19,7 @@ namespace FlatPhysics {
         // Define zero vector
         static FlatVector Zero;
 
-        FlatVector();
-        FlatVector(float x, float y);
+        FlatVector(float x = 0.0f, float y = 0.0f);
 
         FlatVector operator+(const FlatVector& other) const; // Addition
         FlatVector& operator+=(const FlatVector& other); // Addition
