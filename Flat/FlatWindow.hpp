@@ -22,6 +22,8 @@ namespace Flat {
         // Store last frame time
         float lastFrameTime = 0.0f;
 
+        static constexpr float pixelPerMeter = 100.0f; // 100 pixels per meter (adjust based on zoom level)
+
     public:
 
 
@@ -34,8 +36,13 @@ namespace Flat {
             // Create the window with anti-aliasing context settings
             window.create(sf::VideoMode(width, height), title, sf::Style::Default, settings);
 
-            // Set up camera with size equal to the window dimensions
-            camera = sf::View(sf::FloatRect(-width / 2.0f, -height / 2.0f, width, height));
+            camera = sf::View(sf::FloatRect(
+                -width / (2.0f * pixelPerMeter),
+                -height / (2.0f * pixelPerMeter),
+                width / pixelPerMeter,
+                height / pixelPerMeter
+            ));
+
 
             //camera = sf::View(sf::FloatRect(-10.0f, -10.0f, 10.0f, 10.0f));
 
@@ -140,8 +147,10 @@ namespace Flat {
             draw(polygon);
         }
 
-
-
+        void drawLine(sf::Vector2f point1, sf::Vector2f point2, float thickness, Flat::Color color = Flat::Color::White) {
+            Flat::Line line(point1, point2, thickness, color);
+            draw(line);
+        }
 
         void zoom(float factor) {
             zoomLevel *= factor;
