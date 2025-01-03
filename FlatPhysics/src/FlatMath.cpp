@@ -30,3 +30,13 @@ float FlatPhysics::FlatMath::Distance(const FlatPhysics::FlatVector& v1, const F
 float FlatPhysics::FlatMath::Clamp(float value, float min, float max) {
     return std::max(min, std::min(value, max));
 }
+
+FlatPhysics::FlatVector FlatPhysics::FlatMath::ArtimeticMean(const std::vector<FlatPhysics::FlatVector>& vertices) {
+    float sumX = 0.0f;
+    float sumY = 0.0f;
+    for (int i = 0; i < vertices.size(); i++) {
+        sumX += vertices[i].x;
+        sumY += vertices[i].y;
+    }
+    return FlatPhysics::FlatVector(sumX / vertices.size(), sumY / vertices.size());
+}
