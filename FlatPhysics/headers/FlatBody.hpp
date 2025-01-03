@@ -7,10 +7,11 @@
 #ifndef FLATBODY_HPP
 #define FLATBODY_HPP
 
+#include <vector>
+
 #include "FlatVector.hpp"
 
 namespace FlatPhysics {
-
 
     enum class ShapeType {
         Circle = 0,
@@ -23,8 +24,8 @@ namespace FlatPhysics {
         float rotation;
         float angularVelocity;
 
-        const FlatVector* vertices;
-        FlatVector* tranformedVertices;
+        std::vector<FlatVector> vertices;
+        std::vector<FlatVector> tranformedVertices;
 
         bool transformedUpdateRequired;
 
@@ -40,8 +41,7 @@ namespace FlatPhysics {
         float const height;
         float const width;
 
-        int numVertices;
-        const int* triangles;
+        std::vector<int> triangles;
         ShapeType const shapeType;
 
 
@@ -50,10 +50,10 @@ namespace FlatPhysics {
         FlatBody(FlatVector position, float density, float mass, float restitution, float area,
             bool isStatic, float radius, float width, float height, ShapeType shapeType);
 
-        int* createBoxTriangles();
+        std::vector<int> createBoxTriangles();
 
         // Function to get the vertices from the width and height
-        FlatVector* createVertices(float& width, float& height);
+        std::vector<FlatVector> createVertices(float& width, float& height);
 
     public:
 
@@ -77,7 +77,7 @@ namespace FlatPhysics {
 
         void rotate(float amount);
 
-        FlatVector* getTransformedVertices();
+        std::vector<FlatVector> getTransformedVertices();
 
     };
 }
