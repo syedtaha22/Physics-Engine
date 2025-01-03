@@ -6,10 +6,10 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 
-namespace FlatPhysics {
+#include "FlatVector.hpp"
 
-    // Forward Declaration of FlatVector
-    struct FlatVector;
+
+namespace FlatPhysics {
 
     class FlatConverter {
     public:
@@ -19,11 +19,11 @@ namespace FlatPhysics {
         }
 
         // Convert to sf::Vector2f array
-        static inline void toVector2fArray(const FlatPhysics::FlatVector* vertices, int numVertices,
+        static inline void toVector2fArray(const std::vector<FlatPhysics::FlatVector>& vertices,
             std::vector<sf::Vector2f>& sfVertices)
         {
-            sfVertices.resize(numVertices);
-            for (int i = 0; i < numVertices; i++) {
+            sfVertices.resize(vertices.size());
+            for (int i = 0; i < vertices.size(); i++) {
                 sfVertices[i] = sf::Vector2f(vertices[i].x, vertices[i].y);
             }
         }
