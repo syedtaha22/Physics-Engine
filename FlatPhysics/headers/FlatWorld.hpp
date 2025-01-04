@@ -17,17 +17,17 @@ namespace FlatPhysics {
 
 
     class FlatWorld {
-        static constexpr float gravity = 9.8f; // m/s^2
+        std::vector<FlatBody*> bodies;
 
     public:
         // Define Constants
-        static constexpr float minBodySize = 0.01f * 0.01f;
-        static constexpr float maxBodySize = 64.0f * 64.0f;
+        static FlatVector Gravity;
+        static constexpr float MinBodySize = 0.01f * 0.01f;
+        static constexpr float MaxBodySize = 64.0f * 64.0f;
 
-        static constexpr float minDensity = 0.5f; // gm/cm^3
-        static constexpr float maxDensity = 21.45f; // gm/cm^3
+        static constexpr float MinDensity = 0.5f; // gm/cm^3
+        static constexpr float MaxDensity = 21.45f; // gm/cm^3
 
-        std::vector<FlatBody*> bodies;
 
         // Constructor
         FlatWorld() {}
@@ -41,10 +41,13 @@ namespace FlatPhysics {
 
         void step(float time);
 
+        void resolveCollisions(FlatBody*& bodyA, FlatBody*& bodyB, FlatVector& normal, float depth);
+
         bool collides(FlatBody*& bodyA, FlatBody*& bodyB, FlatVector& normal, float& depth);
 
+        size_t numBodies() const;
 
-
+        void clear();
 
     };
 
