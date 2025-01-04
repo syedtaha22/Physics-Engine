@@ -10,10 +10,12 @@
 FlatPhysics::FlatBody::FlatBody(FlatPhysics::FlatVector position, float density, float mass, float restitution, float area,
     bool isStatic, float radius, float width, float height, ShapeType shapeType) :
     position(position), density(density), mass(mass), restitution(restitution), area(area),
-    isStatic(isStatic), radius(radius), width(width), height(height), shapeType(shapeType)
+    isStatic(isStatic), inverseMass(isStatic ? 0 : 1 / mass),
+    radius(radius), width(width), height(height), shapeType(shapeType)
 {
 
-    this->velocity = FlatPhysics::FlatVector::Zero;
+    this->linearVelocity = FlatPhysics::FlatVector::Zero;
+    this->force = FlatPhysics::FlatVector::Zero;
     this->rotation = 0;
     this->angularVelocity = 0;
 
@@ -75,12 +77,12 @@ bool FlatPhysics::FlatBody::createCircleBody(float radius, FlatPhysics::FlatVect
 {
     float area = M_PI * radius * radius;
 
-    if (area < FlatPhysics::FlatWorld::minBodySize || area > FlatPhysics::FlatWorld::maxBodySize) {
+    if (area < FlatPhysics::FlatWorld::MinBodySize || area > FlatPhysics::FlatWorld::MaxBodySize) {
         return false;
 
     }
 
-    if (density < FlatPhysics::FlatWorld::minDensity || density > FlatPhysics::FlatWorld::maxDensity) {
+    if (density < FlatPhysics::FlatWorld::MinDensity || density > FlatPhysics::FlatWorld::MaxDensity) {
         return false;
     }
 
@@ -100,13 +102,13 @@ bool FlatPhysics::FlatBody::createBoxBody(float width, float height, FlatPhysics
 
     float area = width * height;
 
-    if (area < FlatPhysics::FlatWorld::minBodySize || area > FlatPhysics::FlatWorld::maxBodySize) {
+    if (area < FlatPhysics::FlatWorld::MinBodySize || area > FlatPhysics::FlatWorld::MaxBodySize) {
         return false;
     }
 
 
 
-    if (density < FlatPhysics::FlatWorld::minDensity || density > FlatPhysics::FlatWorld::maxDensity) {
+    if (density < FlatPhysics::FlatWorld::MinDensity || density > FlatPhysics::FlatWorld::MaxDensity) {
         return false;
     }
 
@@ -135,9 +137,26 @@ void FlatPhysics::FlatBody::rotate(float amount) {
     transformedUpdateRequired = true;
 }
 
-void FlatPhysics::FlatBody::step(float time) {
-    position += velocity * time;
+void FlatPhysics::FlatBody::step(float time, FlatVector gravity) {
+    // Calculate acceleration
+    //FlatVector acceleration = force * inverseMass;
+
+    if (isStatic) return;
+
+    // Update linear velocity
+    linearVelocity += gravity * time;
+    // Update position
+    position += linearVelocity * time;
+
+    // Update angular velocity
     rotation += angularVelocity * time;
+
+    force = FlatVector::Zero;
+    transformedUpdateRequired = true;
+}
+
+void FlatPhysics::FlatBody::applyForce(FlatPhysics::FlatVector force) {
+    this->force = force;
 }
 
 std::vector<FlatPhysics::FlatVector> FlatPhysics::FlatBody::getTransformedVertices() {
@@ -155,8 +174,3 @@ std::vector<FlatPhysics::FlatVector> FlatPhysics::FlatBody::getTransformedVertic
     transformedUpdateRequired = false;
     return tranformedVertices;
 }
-
-
-
-
-

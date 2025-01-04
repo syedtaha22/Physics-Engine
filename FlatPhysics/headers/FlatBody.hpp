@@ -4,8 +4,8 @@
 
 */
 
-#ifndef FLATBODY_HPP
-#define FLATBODY_HPP
+#ifndef FLAT_BODY_HPP
+#define FLAT_BODY_HPP
 
 #include <vector>
 
@@ -20,7 +20,8 @@ namespace FlatPhysics {
 
     class FlatBody {
         FlatVector position;
-        FlatVector velocity;
+        FlatVector force;
+
         float rotation;
         float angularVelocity;
 
@@ -32,6 +33,7 @@ namespace FlatPhysics {
     public:
         float const density;
         float const mass;
+        float const inverseMass;
         float const restitution;
         float const area;
 
@@ -41,6 +43,7 @@ namespace FlatPhysics {
         float const height;
         float const width;
 
+        FlatVector linearVelocity;
         std::vector<int> triangles;
         ShapeType const shapeType;
 
@@ -77,7 +80,9 @@ namespace FlatPhysics {
 
         void rotate(float amount);
 
-        void step(float time);
+        void step(float time, FlatVector gravity);
+
+        void applyForce(FlatVector force);
 
         std::vector<FlatVector> getTransformedVertices();
 
@@ -86,4 +91,4 @@ namespace FlatPhysics {
 
 
 
-#endif // FLATBODY_HPP
+#endif // FLAT_BODY_HPP
