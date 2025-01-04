@@ -6,6 +6,7 @@
 #include "FlatShapes.hpp"
 #include "FlatColor.hpp"
 #include "FlatKeyboard.hpp"
+#include "FlatMouse.hpp"
 
 // SFML Dependencies (optional, but useful for user convenience)
 #include <SFML/Graphics.hpp>
