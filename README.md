@@ -19,32 +19,35 @@ The project is organized into several directories, with core components split be
 ```
 .
 ├── Flat
-│   ├── FlatColor.hpp
-│   ├── FlatKeyboard.hpp
-│   ├── FlatShapes.hpp
-│   ├── FlatWindow.hpp
-│   └── core.hpp
+│   ├── FlatColor.hpp
+│   ├── FlatKeyboard.hpp
+│   ├── FlatMouse.hpp
+│   ├── FlatShapes.hpp
+│   ├── FlatWindow.hpp
+│   └── core.hpp
 ├── FlatPhysics
-│   ├── core.hpp
-│   ├── headers
-│   │   ├── FlatBody.hpp
-│   │   ├── FlatCollisions.hpp
-│   │   ├── FlatConverter.hpp
-│   │   ├── FlatMath.hpp
-│   │   ├── FlatTransformation.hpp
-│   │   ├── FlatVector.hpp
-│   │   └── FlatWorld.hpp
-│   └── src
-│       ├── FlatBody.cpp
-│       ├── FlatCollisions.cpp
-│       ├── FlatConverter.cpp
-│       ├── FlatMath.cpp
-│       ├── FlatTransformation.cpp
-│       ├── FlatVector.cpp
-│       └── FlatWorld.cpp
+│   ├── core.hpp
+│   ├── headers
+│   │   ├── FlatBody.hpp
+│   │   ├── FlatCollisions.hpp
+│   │   ├── FlatConverter.hpp
+│   │   ├── FlatMath.hpp
+│   │   ├── FlatTransformation.hpp
+│   │   ├── FlatVector.hpp
+│   │   └── FlatWorld.hpp
+│   └── src
+│       ├── FlatBody.cpp
+│       ├── FlatCollisions.cpp
+│       ├── FlatConverter.cpp
+│       ├── FlatMath.cpp
+│       ├── FlatTransformation.cpp
+│       ├── FlatVector.cpp
+│       └── FlatWorld.cpp
+├── FlatUtils
+│   ├── Random.hpp
+│   └── StopWatch.hpp
 ├── FlatTester.cpp
-├── README.md
-└── Random.hpp
+└── README.md
 ```
 
 - **Flat**: Contains the **SFML wrapper** components to simplify the creation of windows, handling of user input, and drawing of shapes. This provides a simple interface for visualizing the physics engine.
