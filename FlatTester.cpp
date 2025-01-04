@@ -6,73 +6,47 @@
 
 #include "Flat/core.hpp" // Include Flat core for graphics
 #include "FlatPhysics/core.hpp" // Include  FlatPhysics core
-#include "Random.hpp" // Include Random
+#include "FlatUtils/Random.hpp" // Include random utility
+#include "FlatUtils/StopWatch.hpp" // Include stopwatch utility
 
 
 class Game {
     Flat::Window window;
-    int numBodies = 10;
 
     FlatPhysics::FlatWorld world;
 
     std::vector<Flat::Color> colors;
     std::vector<Flat::Color> outlineColors;
 
+    FlatUtils::Stopwatch stopwatch;
+
     std::vector<sf::Vector2f> vertexBuffer;
 
 public:
     Game() : window(1280, 768, "Physics Engine from Scratch", Flat::Color("#333333"), 5.0f, 32) {
 
-        colors.resize(numBodies);
 
         // Get the camera extent
         float left, right, top, bottom; // Left, Right, Top, Bottom
         window.getCameraExtent(left, right, top, bottom);
-        float padding = 5.0f;
-
-        // Make a list of bodies
-        const int numBodies = 10;
-
-        colors.resize(numBodies);  // Colors for the bodies
-        outlineColors.resize(numBodies); // Outline colors for the bodies
-
-        for (int i = 0;i < numBodies; i++) {
-            int type = Random::randomInt(0, 1);
-
-            FlatPhysics::FlatBody* body = nullptr;
-
-            // type = (int)FlatPhysics::ShapeType::Circle;
-            // type = (int)FlatPhysics::ShapeType::Box;
-
-            float x = Random::randomFloat(left + padding, right - padding);
-            float y = Random::randomFloat(top + padding, bottom - padding);
+        float padding = abs(right - left) * 0.1f;
 
 
-            if (type == (int)FlatPhysics::ShapeType::Circle) {
-                if (!FlatPhysics::FlatBody::createCircleBody(1.0f, FlatPhysics::FlatVector(x, y), 2, false, 0.1f, body)) {
-                    // Throw error
-                    throw std::runtime_error("Error creating circle body");
-                }
+        FlatPhysics::FlatBody* body = nullptr;
 
-            }
-            else if (type == (int)FlatPhysics::ShapeType::Box) {
-                if (!FlatPhysics::FlatBody::createBoxBody(2.0f, 2.0f, FlatPhysics::FlatVector(x, y), 2, false, 0.1f, body)) {
-                    // Throw error
-                    throw std::runtime_error("Error creating box body");
-                }
-            }
-            else {
-                // Throw error
-                throw std::runtime_error("Invalid shape type");
-            }
-
-            // Add the body to the world
-            world.addBody(body);
-
-            // Assign a random color
-            colors[i] = Random::randomColor();
-            outlineColors[i] = Flat::Color::White;
+        // Make a ground object
+        if (!FlatPhysics::FlatBody::createBoxBody(right - left - padding * 2, 3.0f,
+            FlatPhysics::FlatVector(0.0f, -10.f), 10.f, true, 0.5f, body)) {
+            throw std::runtime_error("Error creating ground body");
         }
+
+
+        // Add the body to the world
+        world.addBody(body);
+
+        colors.push_back(Flat::Color::Green);
+        outlineColors.push_back(Flat::Color::White);
+
     }
 
 
@@ -90,41 +64,81 @@ public:
                     window.zoom(1.1f); // Zoom out
             }
 
+            if (event.type == (int)Flat::Event::MouseButtonPressed) {
+                FlatPhysics::FlatVector position = FlatPhysics::FlatConverter::toFlatVector(Flat::Mouse::getPosition(window));
+
+                // If the left mouse button is clicked, add a circle
+                if (Flat::Mouse::isLeftButtonClicked()) {
+                    float radius = FlatUtils::Random::randomFloat(0.5f, 2.0f);
+                    FlatPhysics::FlatVector position = FlatPhysics::FlatConverter::toFlatVector(Flat::Mouse::getPosition(window));
+
+                    FlatPhysics::FlatBody* body = nullptr;
+
+                    if (!FlatPhysics::FlatBody::createCircleBody(radius, position, 2.0f, false, 0.6f, body)) {
+                        throw std::runtime_error("Error creating circle body");
+                    }
+
+                    world.addBody(body);
+                    colors.push_back(FlatUtils::Random::randomColor());
+                    outlineColors.push_back(Flat::Color::White);
+                }
+                // If the Right mouse button is clicked, add a box
+                if (Flat::Mouse::isRightButtonClicked()) {
+                    float width = FlatUtils::Random::randomFloat(1.0f, 2.0f);
+                    float height = FlatUtils::Random::randomFloat(1.0f, 2.0f);
+
+                    FlatPhysics::FlatBody* body = nullptr;
+
+
+                    if (!FlatPhysics::FlatBody::createBoxBody(width, height, position, 2.0f, false, 0.6f, body)) {
+                        throw std::runtime_error("Error creating box body");
+                    }
+
+                    world.addBody(body);
+                    colors.push_back(FlatUtils::Random::randomColor());
+                    outlineColors.push_back(Flat::Color::White);
+                }
+            }
+
+
             if (event.type == (int)Flat::Event::KeyPressed) {
+                if (Flat::Keyboard::isKeyPressed(Flat::Key::S)) {
+                    // Print the elapsed time between frames
+                    std::cout << "Elapsed Time: " << stopwatch.getElapsedTimeInMilliseconds() << " ms" << std::endl;
+
+                    // Print the number of bodies
+                    std::cout << "Number of bodies: " << world.numBodies() << std::endl;
 
 
+                }
+
+
+
+
+#if false  
                 float dx = 0;
                 float dy = 0;
-                float speed = 4.0f;
-
-                //std::cout << "Key Pressed" << std::endl;
-
+                float forceMagnitude = 40.0f;
                 FlatPhysics::FlatBody* body = nullptr;
 
-                if (!world.getBody(0, body)) {
-                    throw std::runtime_error("Error getting body");
-                }
-
-
-                if (Flat::Keyboard::isKeyPressed(Flat::Key::Left)) dx = -speed;
-                if (Flat::Keyboard::isKeyPressed(Flat::Key::Right)) dx = speed;
-                if (Flat::Keyboard::isKeyPressed(Flat::Key::Up)) dy = -speed;
-                if (Flat::Keyboard::isKeyPressed(Flat::Key::Down)) dy = speed;
-
+                if (!world.getBody(0, body)) throw std::runtime_error("Error getting body");
+                if (Flat::Keyboard::isKeyPressed(Flat::Key::Left)) dx--;
+                if (Flat::Keyboard::isKeyPressed(Flat::Key::Right)) dx++;
+                if (Flat::Keyboard::isKeyPressed(Flat::Key::Up)) dy--;
+                if (Flat::Keyboard::isKeyPressed(Flat::Key::Down)) dy++;
                 if (dx != 0 || dy != 0) {
                     FlatPhysics::FlatVector direction(dx, dy);
-                    FlatPhysics::FlatMath::Normalize(direction);
-
-
-
-                    FlatPhysics::FlatVector velocity = direction * speed * window.getElapsedTimeSinceLastFrame(Flat::TimeUnit::Seconds);
-                    body->move(velocity);
+                    direction = FlatPhysics::FlatMath::Normalize(direction);
+                    FlatPhysics::FlatVector force = direction * forceMagnitude;
+                    body->applyForce(force);
                 }
-
+#endif
             }
         }
 
+        stopwatch.start();
         world.step(window.getElapsedTimeSinceLastFrame(Flat::TimeUnit::Seconds));
+        stopwatch.stop();
 
         window.update();
     }
@@ -132,8 +146,9 @@ public:
 
     void draw() {
         window.clear();
+        window.drawGridLines(5.0f, 0.1f, Flat::Color(255, 255, 255, 50));
 
-        for (size_t i = 0; i < numBodies; i++) {
+        for (size_t i = 0; i < world.numBodies(); i++) {
             FlatPhysics::FlatBody* body = nullptr;
 
             if (!world.getBody(i, body)) {
@@ -146,7 +161,7 @@ public:
 
             // Check if the body is a circle
             if (body->shapeType == FlatPhysics::ShapeType::Circle) {
-                window.drawCircleWithBorder(body->radius, pos, Flat::Color::White, 0.1, colors[i]);
+                window.drawCircleWithBorder(body->radius, pos, outlineColors[i], 0.1, colors[i]);
             }
             else if (body->shapeType == FlatPhysics::ShapeType::Box) {
 
@@ -162,6 +177,37 @@ public:
 
     bool isOpen() {
         return window.isOpen();
+    }
+
+    void wrapScreen() {
+
+        // Get the camera extent
+        float left, right, top, bottom; // Left, Right, Top, Bottom
+        window.getCameraExtent(left, right, top, bottom);
+
+
+        // Loop over the bodies
+        for (int i = 0; i < world.numBodies(); i++) {
+            FlatPhysics::FlatBody* body = nullptr;
+
+            if (!world.getBody(i, body)) {
+                throw std::runtime_error("Error getting body at index " + std::to_string(i));
+            }
+
+            // Get the position
+            FlatPhysics::FlatVector pos = body->getPosition();
+
+            // Check if the body is out of bounds, and wrap it
+            if (pos.x < left) pos.x = right;
+            if (pos.x > right) pos.x = left;
+            if (pos.y < top) pos.y = bottom;
+            if (pos.y > bottom) pos.y = top;
+
+            // Set the new position
+            body->moveTo(pos);
+
+
+        }
     }
 
 };
