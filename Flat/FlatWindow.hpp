@@ -26,6 +26,8 @@ namespace Flat {
 
     public:
 
+        friend class Mouse;
+
 
         // Window constructor with optional anti-aliasing parameter
         Window(unsigned int width, unsigned int height, const std::string& title, Flat::Color bgcolor = Flat::Color::Black,
@@ -37,16 +39,21 @@ namespace Flat {
             window.create(sf::VideoMode(width, height), title, sf::Style::Default, settings);
 
             camera = sf::View(sf::FloatRect(
-                -width / (2.0f * pixelPerMeter),
-                -height / (2.0f * pixelPerMeter),
-                width / pixelPerMeter,
-                height / pixelPerMeter
+                -width / (2.0f * pixelPerMeter), // Left
+                -height / (2.0f * pixelPerMeter), // Top
+                width / pixelPerMeter,           // Width
+                height / pixelPerMeter           // Height
             ));
 
 
+            // Flip the y-axis
+            camera.setSize(camera.getSize().x, -camera.getSize().y);
+
+
+            camera.setCenter(0.0f, 0.0f); // Set the center of the camera
+
             //camera = sf::View(sf::FloatRect(-10.0f, -10.0f, 10.0f, 10.0f));
 
-            camera.setCenter(0.0f, 0.0f); // Center the camera explicitly at the origin (0,0)
             camera.zoom(zoomLevel); // Set the zoom level
 
 
@@ -197,6 +204,39 @@ namespace Flat {
 
         void update() {
             lastFrameTime = clock.getElapsedTime().asSeconds(); // Update last frame time
+        }
+
+        void drawGridLines(float gridSize = 1.0f, float lineThickness = 0.1f, Flat::Color color = Flat::Color::White) {
+            // Get the current camera's extent (the visible area in the world coordinates)
+            float left, right, top, bottom;
+            getCameraExtent(left, right, top, bottom);
+
+            // Draw vertical grid lines
+            for (float x = 0; x <= right; x += gridSize) {
+                // Draws the y axis, and positive x axis
+                drawLine(sf::Vector2f(x, top), sf::Vector2f(x, bottom), lineThickness, color);
+
+                if (x != 0) {
+                    // Draws the negative x axis
+                    drawLine(sf::Vector2f(-x, top), sf::Vector2f(-x, bottom), lineThickness, color);
+                }
+
+            }
+
+            // Draw horizontal grid lines
+            for (float y = 0; y <= top; y += gridSize) {
+                // Draws the x axis, and positive y axis
+                drawLine(sf::Vector2f(left, y), sf::Vector2f(right, y), lineThickness, color);
+
+                if (y != 0) {
+                    // Draws the negative y axis
+                    drawLine(sf::Vector2f(left, -y), sf::Vector2f(right, -y), lineThickness, color);
+                }
+
+            }
+
+            // Draw the origin point (center of the window)
+            drawCircleFilled(0.1f, sf::Vector2f(0.0f, 0.0f), Flat::Color::Red);
         }
 
         ~Window() {
