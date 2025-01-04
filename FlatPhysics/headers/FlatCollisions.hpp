@@ -33,12 +33,15 @@ namespace FlatPhysics {
 
 
         // Check if two polygons are colliding
-        static bool polygonPolygonCollision(const std::vector<FlatVector>& verticesA,
-            const std::vector<FlatVector>& verticesB, FlatVector& normal, float& depth);
+        static bool polygonPolygonCollision(
+            const FlatVector& centerA, const std::vector<FlatVector>& verticesA,
+            const FlatVector& centerB, const std::vector<FlatVector>& verticesB,
+            FlatVector& normal, float& depth);
 
         // Check a circle and a polygon are colliding
         static bool circlePolygonCollision(const FlatVector& circleCenter, float radius,
-            const std::vector<FlatVector>& vertices, FlatVector& normal, float& depth);
+            const FlatVector& polygonCenter, const std::vector<FlatVector>& vertices,
+            FlatVector& normal, float& depth);
     };
 
 

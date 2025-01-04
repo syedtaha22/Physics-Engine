@@ -67,14 +67,17 @@ bool FlatPhysics::FlatCollisions::circleCircleCollision(const FlatVector& center
     if (distance >= radii) {
         return false;
     }
-    normal = centerB - centerA;
+    normal = FlatMath::Normalize(centerB - centerA);
+
     depth = radii - distance;
 
     return true;
 }
 
-bool FlatPhysics::FlatCollisions::polygonPolygonCollision(const std::vector<FlatVector>& verticesA,
-    const std::vector<FlatVector>& verticesB, FlatVector& normal, float& depth)
+bool FlatPhysics::FlatCollisions::polygonPolygonCollision(
+    const FlatVector& centerA, const std::vector<FlatVector>& verticesA,
+    const FlatVector& centerB, const std::vector<FlatVector>& verticesB,
+    FlatVector& normal, float& depth)
 {
 
     normal = FlatVector::Zero;
@@ -87,6 +90,7 @@ bool FlatPhysics::FlatCollisions::polygonPolygonCollision(const std::vector<Flat
 
         FlatVector edge = v2 - v1;
         FlatVector axis = FlatVector(-edge.y, edge.x);
+        axis = FlatMath::Normalize(axis);
 
         float minA, maxA, minB, maxB;
         ProjectVertices(verticesA, axis, minA, maxA);
@@ -111,6 +115,7 @@ bool FlatPhysics::FlatCollisions::polygonPolygonCollision(const std::vector<Flat
 
         FlatVector edge = v2 - v1;
         FlatVector axis = FlatVector(-edge.y, edge.x);
+        axis = FlatMath::Normalize(axis);
 
         float minA, maxA, minB, maxB;
         ProjectVertices(verticesA, axis, minA, maxA);
@@ -127,12 +132,6 @@ bool FlatPhysics::FlatCollisions::polygonPolygonCollision(const std::vector<Flat
         }
     }
 
-    depth /= FlatMath::Length(normal);
-    normal = FlatMath::Normalize(normal);
-
-    FlatVector centerA = FlatMath::ArtimeticMean(verticesA);
-    FlatVector centerB = FlatMath::ArtimeticMean(verticesB);
-
     FlatVector centerDifference = centerB - centerA;
 
     if (FlatMath::DotProduct(centerDifference, normal) < 0) {
@@ -144,7 +143,7 @@ bool FlatPhysics::FlatCollisions::polygonPolygonCollision(const std::vector<Flat
 
 
 bool FlatPhysics::FlatCollisions::circlePolygonCollision(const FlatVector& circleCenter, float radius,
-    const std::vector<FlatVector>& vertices, FlatVector& normal, float& depth)
+    const FlatVector& polygonCenter, const std::vector<FlatVector>& vertices, FlatVector& normal, float& depth)
 {
     normal = FlatVector::Zero;
     depth = FlatMath::FloatMax;
@@ -155,6 +154,7 @@ bool FlatPhysics::FlatCollisions::circlePolygonCollision(const FlatVector& circl
 
         FlatVector edge = v2 - v1;
         FlatVector axis = FlatVector(-edge.y, edge.x);
+        axis = FlatMath::Normalize(axis);
 
         float minA, maxA, minB, maxB;
         ProjectVertices(vertices, axis, minA, maxA);
@@ -175,6 +175,7 @@ bool FlatPhysics::FlatCollisions::circlePolygonCollision(const FlatVector& circl
     FlatVector closestVertex = vertices[closestVertexIndex];
 
     FlatVector axis = closestVertex - circleCenter;
+    axis = FlatMath::Normalize(axis);
 
     float minA, maxA, minB, maxB;
     ProjectVertices(vertices, axis, minA, maxA);
@@ -189,12 +190,6 @@ bool FlatPhysics::FlatCollisions::circlePolygonCollision(const FlatVector& circl
         depth = axisDepth;
         normal = axis;
     }
-
-    depth /= FlatMath::Length(normal);
-    normal = FlatMath::Normalize(normal);
-
-
-    FlatVector polygonCenter = FlatMath::ArtimeticMean(vertices);
 
     FlatVector centerDifference = polygonCenter - circleCenter;
 
