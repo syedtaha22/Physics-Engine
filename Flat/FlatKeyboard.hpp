@@ -62,7 +62,8 @@ namespace Flat {
     enum class Event {
         KeyPressed = sf::Event::KeyPressed,
         KeyReleased = sf::Event::KeyReleased,
-        MouseWheelScrolled = sf::Event::MouseWheelScrolled
+        MouseWheelScrolled = sf::Event::MouseWheelScrolled,
+        MouseButtonPressed = sf::Event::MouseButtonPressed
     };
 
     class Keyboard {
