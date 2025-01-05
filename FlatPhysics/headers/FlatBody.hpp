@@ -13,6 +13,9 @@
 
 namespace FlatPhysics {
 
+    // Forward Declaration of FlatAABB
+    struct FlatAABB;
+
     enum class ShapeType {
         Circle = 0,
         Box = 1
@@ -86,6 +89,7 @@ namespace FlatPhysics {
 
         std::vector<FlatVector> getTransformedVertices();
 
+        FlatAABB getAABB() const;
     };
 }
 
