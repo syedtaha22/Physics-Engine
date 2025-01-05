@@ -176,6 +176,22 @@ namespace Flat {
 
         }
 
+        float getCameraBottom() {
+            return camera.getCenter().y + camera.getSize().y / 2.0f;
+        }
+
+        float getCameraTop() {
+            return camera.getCenter().y - camera.getSize().y / 2.0f;
+        }
+
+        float getCameraLeft() {
+            return camera.getCenter().x - camera.getSize().x / 2.0f;
+        }
+
+        float getCameraRight() {
+            return camera.getCenter().x + camera.getSize().x / 2.0f;
+        }
+
         float getElapsedTime(TimeUnit unit = TimeUnit::Seconds) {
             switch (unit) {
             case TimeUnit::Milliseconds:
