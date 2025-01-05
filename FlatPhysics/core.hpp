@@ -11,5 +11,6 @@
 #include "headers/FlatWorld.hpp"
 #include "headers/FlatCollisions.hpp"
 #include "headers/FlatTransformation.hpp"
+#include "headers/FlatAABB.hpp"
 
 #endif // FLAT_PHYSICS_CORE_HPP
