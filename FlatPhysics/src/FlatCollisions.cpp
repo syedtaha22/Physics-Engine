@@ -1,4 +1,7 @@
+#include <iostream>
 
+using std::cout;
+using std::endl;
 
 #include "../headers/FlatCollisions.hpp"
 #include "../headers/FlatVector.hpp"
@@ -25,12 +28,17 @@ void FlatPhysics::FlatCollisions::ProjectVertices(const std::vector<FlatVector>&
 void FlatPhysics::FlatCollisions::ProjectCircle(const FlatVector& center, float radius,
     const FlatVector& axis, float& min, float& max)
 {
-    FlatVector displacement = FlatMath::Normalize(axis) * radius;
 
-    min = FlatMath::DotProduct(center + displacement, axis);
-    max = FlatMath::DotProduct(center - displacement, axis);
+    // Calculate the Displacement
+    // Axis is already normalized, so we can use it as the direction.
+    FlatVector displacement = axis * radius;
+
+    // Project the min and max points of the circle onto the axis
+    min = FlatMath::DotProduct(center - displacement, axis);
+    max = FlatMath::DotProduct(center + displacement, axis);
 
     if (min > max) {
+        std::cout << "Min is greater than max" << std::endl;
         float temp = min;
         min = max;
         max = temp;
@@ -43,7 +51,7 @@ int FlatPhysics::FlatCollisions::getClosestVertexIndex(const FlatVector& point, 
     int closestIndex = 0;
 
     for (int i = 0; i < vertices.size(); i++) {
-        float distance = FlatMath::Distance(point, vertices[i]);
+        float distance = FlatMath::SquaredDistance(point, vertices[i]);
         if (distance < minDistance) {
             minDistance = distance;
             closestIndex = i;
@@ -58,17 +66,23 @@ bool FlatPhysics::FlatCollisions::circleCircleCollision(const FlatVector& center
     const FlatVector& centerB, float radiusB, FlatVector& normal, float& depth)
 {
 
+    // Initialize normal and depth
     normal = FlatVector::Zero;
     depth = 0.0f;
 
+    // Calculate the distance between the two centers
     float distance = FlatMath::Distance(centerA, centerB);
+
+    // Calculate the sum of the radii
     float radii = radiusA + radiusB;
 
-    if (distance >= radii) {
-        return false;
-    }
+    // Check if the distance is greater than the sum of the radii, then the circles are not colliding
+    if (distance >= radii) return false;
+
+    // Calculate the normal
     normal = FlatMath::Normalize(centerB - centerA);
 
+    // Calculate the depth
     depth = radii - distance;
 
     return true;
@@ -83,62 +97,80 @@ bool FlatPhysics::FlatCollisions::polygonPolygonCollision(
     normal = FlatVector::Zero;
     depth = FlatMath::FloatMax;
 
+    // Allocate memory for variables only once instead of in each loop
+    float minA, maxA, minB, maxB;
+    FlatVector edge = FlatVector::Zero;
+    FlatVector axis = FlatVector::Zero;
+    float axisDepth = 0.0f;
+
     // Loop over body A vertices
     for (int i = 0; i < verticesA.size(); i++) {
-        FlatVector v1 = verticesA[i];
-        FlatVector v2 = verticesA[(i + 1) % verticesA.size()];
 
-        FlatVector edge = v2 - v1;
-        FlatVector axis = FlatVector(-edge.y, edge.x);
-        axis = FlatMath::Normalize(axis);
+        // Get the edge from the current vertex to the next vertex        
+        edge = FlatMath::EdgeBetween(verticesA[i], verticesA[(i + 1) % verticesA.size()]);
 
-        float minA, maxA, minB, maxB;
+        // Get the axis perpendicular to the edge in normalised space
+        axis = FlatMath::Normalize(FlatVector(-edge.y, edge.x));
+
+        // Project the vertices of both bodies onto the axis
         ProjectVertices(verticesA, axis, minA, maxA);
         ProjectVertices(verticesB, axis, minB, maxB);
 
-        if (maxA <= minB || maxB <= minA) {
-            return false;
-        }
+        // Check if the projections overlap
+        if (maxA <= minB || maxB <= minA) return false;
 
-        float axisDepth = std::min(maxB - minA, maxA - minB);
+        // Get the depth of the overlap
+        axisDepth = std::min(maxB - minA, maxA - minB);
+
+        // Check if the depth is less than the current depth
         if (axisDepth < depth) {
             depth = axisDepth;
             normal = axis;
         }
-
     }
 
     // Loop over body B vertices
     for (int i = 0; i < verticesB.size(); i++) {
-        FlatVector v1 = verticesB[i];
-        FlatVector v2 = verticesB[(i + 1) % verticesB.size()];
+        // Get the edge from the current vertex to the next vertex
+        edge = FlatMath::EdgeBetween(verticesB[i], verticesB[(i + 1) % verticesB.size()]);
 
-        FlatVector edge = v2 - v1;
-        FlatVector axis = FlatVector(-edge.y, edge.x);
-        axis = FlatMath::Normalize(axis);
+        // Get the axis perpendicular to the edge in normalised space
+        axis = FlatMath::Normalize(FlatVector(-edge.y, edge.x));
 
-        float minA, maxA, minB, maxB;
+        // Project the vertices of both bodies onto the axis
         ProjectVertices(verticesA, axis, minA, maxA);
         ProjectVertices(verticesB, axis, minB, maxB);
 
-        if (maxA <= minB || maxB <= minA) {
-            return false;
-        }
+        // Check if the projections overlap
+        if (maxA <= minB || maxB <= minA) return false;
 
-        float axisDepth = std::min(maxB - minA, maxA - minB);
+        // Get the depth of the overlap
+        axisDepth = std::min(maxB - minA, maxA - minB);
+
+        // Check if the depth is less than the current depth
         if (axisDepth < depth) {
             depth = axisDepth;
             normal = axis;
         }
     }
 
-    FlatVector centerDifference = centerB - centerA;
+    /*
+        Check if the normal is pointing from Body A to Body B
+        Meaning that the normal should be in the direction we
+        want to move Body B, in order to resolve the collision.
 
-    if (FlatMath::DotProduct(centerDifference, normal) < 0) {
-        normal = -normal;
-    }
+        - Get a vector pointing from the center of Body A to the center of Body B
+        - Check if the dot product of the vector and the normal is less than 0
+        - Reverse the normal if the dot product is less than 0
+    */
 
-    return true;
+    // Get the edge from the center of Body A to the center of Body B
+    edge = centerB - centerA;
+
+    // If the dot product of the edge and the normal is less than 0, reverse the normal
+    if (FlatMath::DotProduct(edge, normal) < 0) normal = -normal;
+
+    return true; // Return true since the bodies are colliding
 }
 
 
@@ -148,54 +180,78 @@ bool FlatPhysics::FlatCollisions::circlePolygonCollision(const FlatVector& circl
     normal = FlatVector::Zero;
     depth = FlatMath::FloatMax;
 
+    // Allocate memory for variables only once instead of in each loop
+    float minA, maxA, minB, maxB;
+    FlatVector axis = FlatVector::Zero;
+    FlatVector edge = FlatVector::Zero;
+    float axisDepth = 0.0f;
+
     for (int i = 0; i < vertices.size(); i++) {
-        FlatVector v1 = vertices[i];
-        FlatVector v2 = vertices[(i + 1) % vertices.size()];
+        // Get the edge from the current vertex to the next vertex        
+        edge = FlatMath::EdgeBetween(vertices[i], vertices[(i + 1) % vertices.size()]);
 
-        FlatVector edge = v2 - v1;
-        FlatVector axis = FlatVector(-edge.y, edge.x);
-        axis = FlatMath::Normalize(axis);
+        // Get the axis perpendicular to the edge in normalised space
+        axis = FlatMath::Normalize(FlatVector(-edge.y, edge.x));
 
-        float minA, maxA, minB, maxB;
+        // Project the vertices of the polygon onto the axis
         ProjectVertices(vertices, axis, minA, maxA);
+
+        // Project the circle onto the axis
         ProjectCircle(circleCenter, radius, axis, minB, maxB);
 
-        if (maxA <= minB || maxB <= minA) {
-            return false;
-        }
+        // Check if the projections overlap
+        if (maxA <= minB || maxB <= minA) return false;
 
-        float axisDepth = std::min(maxB - minA, maxA - minB);
+        // Get the depth of the overlap
+        axisDepth = std::min(maxB - minA, maxA - minB);
+
+        // Check if the depth is less than the current depth
         if (axisDepth < depth) {
             depth = axisDepth;
             normal = axis;
         }
     }
 
-    int closestVertexIndex = getClosestVertexIndex(circleCenter, vertices);
-    FlatVector closestVertex = vertices[closestVertexIndex];
+    int closestVertex = getClosestVertexIndex(circleCenter, vertices);
 
-    FlatVector axis = closestVertex - circleCenter;
-    axis = FlatMath::Normalize(axis);
+    // Get the edge from the Circle Center to the closest vertex of the polygon, and normalize it
+    axis = FlatMath::Normalize(vertices[closestVertex] - circleCenter);
 
-    float minA, maxA, minB, maxB;
+    // Project the vertices of the polygon onto the axis
     ProjectVertices(vertices, axis, minA, maxA);
+    // Project the circle onto the axis
     ProjectCircle(circleCenter, radius, axis, minB, maxB);
 
-    if (maxA <= minB || maxB <= minA) {
-        return false;
-    }
+    // Check if the projections overlap
+    if (maxA <= minB || maxB <= minA) return false;
 
-    float axisDepth = std::min(maxB - minA, maxA - minB);
+    // Get the depth of the overlap
+    axisDepth = std::min(maxB - minA, maxA - minB);
+
+    // Check if the depth is less than the current depth
     if (axisDepth < depth) {
         depth = axisDepth;
         normal = axis;
     }
 
-    FlatVector centerDifference = polygonCenter - circleCenter;
+    /*
+        In this case the Circle is Body A and the Polygon is Body B.
 
-    if (FlatMath::DotProduct(centerDifference, normal) < 0) {
-        normal = -normal;
-    }
+        Check if the normal is pointing from the Circle to the Polygon
+        Meaning that the normal should be in the direction we
+        want to move the Polygon, in order to resolve the collision.
 
-    return true;
+
+        - Get a vector pointing from the center of the Circle to the center of the Polygon
+        - Check if the dot product of the vector and the normal is less than 0
+        - Reverse the normal if the dot product is less than 0
+    */
+
+    // Get the edge from the center of the Circle to the center of the Polygon
+    edge = polygonCenter - circleCenter;
+
+    // Check if the normal is pointing from the Circle to the Polygon
+    if (FlatMath::DotProduct(edge, normal) < 0) normal = -normal;
+
+    return true; // Return true since the bodies are colliding
 }
