@@ -22,6 +22,7 @@ Contains code to handle window management, input, and basic graphics using SFML.
   - `FlatMouse`: Deals with mouse input, including position and button state.
   - `FlatWindow`: Manages the SFML window, providing methods for window operations like opening, closing, and handling events. Also provides methods for drawing shapes on to the window.
   <br>
+  
   - `FlatColor`: Represents a color in RGBA format and provides functions to create and manage colors.
   - `FlatShapes`: Contains structures for basic shapes like circles and rectangles.
 
@@ -34,6 +35,7 @@ Contains the physics engine, focusing on collision detection, vector math, bodie
   - `FlatMath`: Provides functions to operate on vectors, such as dot product, cross product, and normalization.
   - `FlatWorld`: The main simulation world, containing bodies and handling physics updates.
   <br>
+  
   - `FlatAABB`: Represents an Axis-Aligned Bounding Box (AABB) for objects
   - `FlatManifold`: Represents the contact points and data related to collisions between bodies.
   - `FlatTransformation`: Implements transformations such as translation, rotation, and scaling for physical bodies.
