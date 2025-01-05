@@ -22,16 +22,25 @@ namespace FlatPhysics {
         FlatVector(float x = 0.0f, float y = 0.0f);
 
         FlatVector operator+(const FlatVector& other) const; // Addition
-        FlatVector& operator+=(const FlatVector& other); // In-place addition
         FlatVector operator-(const FlatVector& other) const; // Subtraction
-        FlatVector& operator-=(const FlatVector& other); // In-place subtraction
-        FlatVector operator-() const; // Negation
         FlatVector operator*(float scalar) const; // Multiplication
-        friend FlatVector operator*(float scalar, const FlatVector& vector); // Multiplication
         FlatVector operator/(float scalar) const; // Division
+
+        friend FlatVector operator*(float scalar, const FlatVector& vector); // Multiplication
+
+        FlatVector& operator+=(const FlatVector& other); // In-place addition
+        FlatVector& operator-=(const FlatVector& other); // In-place subtraction
+        FlatVector& operator*=(float scalar); // In-place multiplication
+        FlatVector& operator/=(float scalar); // In-place division
+
+        FlatVector operator-() const; // Negation
         bool operator==(const FlatVector& other) const; // Check for equality
         std::string toString() const; // To string
-        static FlatVector Transform(const FlatVector& vector, FlatTransformation& transform); // Static function to transform a vector
+
+        // Static function to transform a vector
+        static FlatVector Transform(const FlatVector& vector, FlatTransformation& transform);
+
+
     };
 
 } // namespace FlatPhysics

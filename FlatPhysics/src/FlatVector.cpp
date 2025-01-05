@@ -13,23 +13,51 @@ namespace FlatPhysics {
 
     FlatVector::FlatVector(float x, float y) : x(x), y(y) {}
 
+    // Addition
     FlatVector FlatVector::operator+(const FlatVector& other) const {
         return FlatVector(x + other.x, y + other.y);
     }
 
+    // Subtraction
+    FlatVector FlatVector::operator-(const FlatVector& other) const {
+        return FlatVector(x - other.x, y - other.y);
+    }
+
+    // Multiplication
+    FlatVector FlatVector::operator*(float scalar) const {
+        return FlatVector(x * scalar, y * scalar);
+    }
+
+    // Division
+    FlatVector FlatVector::operator/(float scalar) const {
+        return FlatVector(x / scalar, y / scalar);
+    }
+
+    // In-place addition
     FlatVector& FlatVector::operator+=(const FlatVector& other) {
         x += other.x;
         y += other.y;
         return *this;
     }
 
-    FlatVector FlatVector::operator-(const FlatVector& other) const {
-        return FlatVector(x - other.x, y - other.y);
-    }
-
+    // In-place subtraction
     FlatVector& FlatVector::operator-=(const FlatVector& other) {
         x -= other.x;
         y -= other.y;
+        return *this;
+    }
+
+    // In-place multiplication
+    FlatVector& FlatVector::operator*=(float scalar) {
+        x *= scalar;
+        y *= scalar;
+        return *this;
+    }
+
+    // In-place division
+    FlatVector& FlatVector::operator/=(float scalar) {
+        x /= scalar;
+        y /= scalar;
         return *this;
     }
 
@@ -38,9 +66,6 @@ namespace FlatPhysics {
         return FlatVector(-x, -y);
     }
 
-    FlatVector FlatVector::operator*(float scalar) const {
-        return FlatVector(x * scalar, y * scalar);
-    }
 
 
     FlatVector operator*(float scalar, const FlatVector& vector) {
@@ -48,9 +73,6 @@ namespace FlatPhysics {
     }
 
 
-    FlatVector FlatVector::operator/(float scalar) const {
-        return FlatVector(x / scalar, y / scalar);
-    }
 
     bool FlatVector::operator==(const FlatVector& other) const {
         return x == other.x && y == other.y;
