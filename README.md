@@ -17,7 +17,7 @@ The project is organized into several modules that encapsulate specific function
 
 ---
 
-#### **Flat(namespace)**
+#### **Flat *(namespace)***
 Contains code to handle window management, input, and basic graphics using SFML. It serves as a wrapper around SFML to simplify its usage within the project.
   - `FlatKeyboard`: Handles keyboard input events and states.
   - `FlatMouse`: Deals with mouse input, including position and button state.
@@ -27,7 +27,7 @@ Contains code to handle window management, input, and basic graphics using SFML.
   - `FlatShapes`: Contains structures for basic shapes like circles and rectangles.
 ---
 
-#### **FlatPhysics(namespace)** 
+#### **FlatPhysics *(namespace)*** 
 Contains the physics engine, focusing on collision detection, vector math, bodies, and transformations. All components are encapsulated within the `FlatPhysics` namespace. 
 
   - `FlatBody`: Defines physical bodies (e.g., shapes or objects) in the simulation.
@@ -44,7 +44,7 @@ Contains the physics engine, focusing on collision detection, vector math, bodie
 
 ---
 
-#### **FlatUtils(namespace)**
+#### **FlatUtils *(namespace)***
 Contains utility classes and functions that provide general-purpose functionality used across the project.
 
   - `Random`: Provides utilities for generating random numbers, boolean values, and colors.
