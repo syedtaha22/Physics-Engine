@@ -13,46 +13,49 @@ The main goal of the **Physics Engine** is to provide a basic, accessible framew
 Rather than offering a complex or feature-rich engine, this project focuses on the fundamental aspects of physics simulation, providing a straightforward interface for anyone interested in exploring basic 2D physics.
 
 ## Project Structure
+The project is organized into several modules that encapsulate specific functionalities, divided mainly into **Flat**, **FlatPhysics**, and **FlatUtils**. Each module contains relevant headers and source files for its respective purpose.
 
-The project is organized into several directories, with core components split between the **Flat** (SFML wrapper) and **FlatPhysics** (physics engine) modules:
+---
 
-```
-.
-├── Flat
-│   ├── FlatColor.hpp
-│   ├── FlatKeyboard.hpp
-│   ├── FlatMouse.hpp
-│   ├── FlatShapes.hpp
-│   ├── FlatWindow.hpp
-│   └── core.hpp
-├── FlatPhysics
-│   ├── core.hpp
-│   ├── headers
-│   │   ├── FlatBody.hpp
-│   │   ├── FlatCollisions.hpp
-│   │   ├── FlatConverter.hpp
-│   │   ├── FlatMath.hpp
-│   │   ├── FlatTransformation.hpp
-│   │   ├── FlatVector.hpp
-│   │   └── FlatWorld.hpp
-│   └── src
-│       ├── FlatBody.cpp
-│       ├── FlatCollisions.cpp
-│       ├── FlatConverter.cpp
-│       ├── FlatMath.cpp
-│       ├── FlatTransformation.cpp
-│       ├── FlatVector.cpp
-│       └── FlatWorld.cpp
-├── FlatUtils
-│   ├── Random.hpp
-│   └── StopWatch.hpp
-├── FlatTester.cpp
-└── README.md
-```
+#### **Flat(namespace)**
+Contains code to handle window management, input, and basic graphics using SFML. It serves as a wrapper around SFML to simplify its usage within the project.
+  - `FlatKeyboard`: Handles keyboard input events and states.
+  - `FlatMouse`: Deals with mouse input, including position and button state.
+  - `FlatWindow`: Manages the SFML window, providing methods for window operations like opening, closing, and handling events. Also provides methods for drawing shapes on to the window.
+  
+  - `FlatColor`: Represents a color in RGBA format and provides functions to create and manage colors.
+  - `FlatShapes`: Contains structures for basic shapes like circles and rectangles.
+---
 
-- **Flat**: Contains the **SFML wrapper** components to simplify the creation of windows, handling of user input, and drawing of shapes. This provides a simple interface for visualizing the physics engine.
-- **FlatPhysics**: The core physics engine logic, which includes the components for simulating physics bodies, handling collisions, and integrating forces over time.
-- **FlatTester.cpp**: A simple test program where the physics engine is integrated with the SFML wrapper to visualize and test the behavior of simulated bodies.
+#### **FlatPhysics(namespace)** 
+Contains the physics engine, focusing on collision detection, vector math, bodies, and transformations. All components are encapsulated within the `FlatPhysics` namespace. 
+
+  - `FlatBody`: Defines physical bodies (e.g., shapes or objects) in the simulation.
+  - `FlatCollisions`: Handles collision detection and resolution between bodies.
+  - `FlatConverter`: Contains functions to convert between `FlatVector` and SFML vector types.
+  - `FlatMath`: Provides functions to operate on vectors, such as dot product, cross product, and normalization.
+  - `FlatWorld`: The main simulation world, containing bodies and handling physics updates.
+  
+
+  - `FlatAABB`: Represents an Axis-Aligned Bounding Box (AABB) for objects
+  - `FlatManifold`: Represents the contact points and data related to collisions between bodies.
+  - `FlatTransformation`: Implements transformations such as translation, rotation, and scaling for physical bodies.
+  - `FlatVector`: Defines a 2D vector with x and y components and provides overloaded operators for vector operations.
+
+---
+
+#### **FlatUtils(namespace)**
+Contains utility classes and functions that provide general-purpose functionality used across the project.
+
+  - `Random`: Provides utilities for generating random numbers, boolean values, and colors.
+  - `StopWatch`: Implements a stopwatch/timer class to measure elapsed time during simulations or processes.
+
+---
+
+#### **FlatTester.cpp**
+A test file or entry point for testing and validating the components of the project.
+
+---
 
 ## Core Features
 
