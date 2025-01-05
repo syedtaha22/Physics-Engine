@@ -10,6 +10,10 @@
 #include "FlatUtils/StopWatch.hpp" // Include stopwatch utility
 
 
+// global stopwatch
+FlatUtils::Stopwatch globalStopwatch;
+
+
 class Game {
     Flat::Window window;
 
@@ -59,9 +63,9 @@ public:
             // Check for zoom
             if (event.type == (int)Flat::Event::MouseWheelScrolled) {
                 if (event.mouseWheelScroll.delta > 0)
-                    window.zoom(0.9f); // Zoom in
+                    window.zoom(0.95f); // Zoom in
                 else
-                    window.zoom(1.1f); // Zoom out
+                    window.zoom(1.05f); // Zoom out
             }
 
             if (event.type == (int)Flat::Event::MouseButtonPressed) {
@@ -69,7 +73,7 @@ public:
 
                 // If the left mouse button is clicked, add a circle
                 if (Flat::Mouse::isLeftButtonClicked()) {
-                    float radius = FlatUtils::Random::randomFloat(0.5f, 2.0f);
+                    float radius = FlatUtils::Random::randomFloat(0.75f, 1.5f);
                     FlatPhysics::FlatVector position = FlatPhysics::FlatConverter::toFlatVector(Flat::Mouse::getPosition(window));
 
                     FlatPhysics::FlatBody* body = nullptr;
@@ -104,11 +108,16 @@ public:
             if (event.type == (int)Flat::Event::KeyPressed) {
                 if (Flat::Keyboard::isKeyPressed(Flat::Key::S)) {
                     // Print the elapsed time between frames
-                    std::cout << "Elapsed Time: " << stopwatch.getElapsedTimeInMilliseconds() << " ms" << std::endl;
+                    std::cout << "Step Time: " << stopwatch.getElapsedTimeInMilliseconds() << " milliseconds" << std::endl;
+                    std::cout << "Draw Time: " << globalStopwatch.getElapsedTimeInMilliseconds() << " milliseconds" << std::endl;
+                    std::cout << "Internal Time: " << FlatPhysics::FlatWorld::worldStopwatch.getElapsedTimeInMilliseconds() << " milliseconds" << std::endl;
+
+                    // Print the number of allocated and deallocated objects
+                    std::cout << std::endl;
 
                     // Print the number of bodies
                     std::cout << "Number of bodies: " << world.numBodies() << std::endl;
-
+                    std::cout << std::endl;
 
                 }
 
@@ -137,8 +146,29 @@ public:
         }
 
         stopwatch.start();
-        world.step(window.getElapsedTimeSinceLastFrame(Flat::TimeUnit::Seconds));
+        world.step(window.getElapsedTimeSinceLastFrame(Flat::TimeUnit::Seconds), 20);
         stopwatch.stop();
+
+        float bottom = window.getCameraBottom();
+
+        // Loop over the bodies
+        for (int i = 0; i < world.numBodies(); i++) {
+            FlatPhysics::FlatBody* body = nullptr;
+
+            if (!world.getBody(i, body)) {
+                throw std::runtime_error("Error getting body at index " + std::to_string(i));
+            }
+
+            // Get the position
+            FlatPhysics::FlatAABB aabb = body->getAABB();
+            //std::cout << "Body " << i << " AABB: " << aabb.min->x << ", " << aabb.min->y << " - " << aabb.max->x << ", " << aabb.max->y << std::endl;
+            // Check if the body is out of bounds
+            if (aabb.max->y < bottom) {
+                world.removeBody(i);
+                colors.erase(colors.begin() + i);
+                outlineColors.erase(outlineColors.begin() + i);
+            }
+        }
 
         window.update();
     }
@@ -146,7 +176,7 @@ public:
 
     void draw() {
         window.clear();
-        window.drawGridLines(5.0f, 0.1f, Flat::Color(255, 255, 255, 50));
+        window.drawGridLines(1.0f, 0.1f, Flat::Color(255, 255, 255, 50));
 
         for (size_t i = 0; i < world.numBodies(); i++) {
             FlatPhysics::FlatBody* body = nullptr;
@@ -161,13 +191,13 @@ public:
 
             // Check if the body is a circle
             if (body->shapeType == FlatPhysics::ShapeType::Circle) {
-                window.drawCircleWithBorder(body->radius, pos, outlineColors[i], 0.1, colors[i]);
+                window.drawCircleWithBorder(body->radius, pos, outlineColors[i], 0.05f, colors[i]);
             }
             else if (body->shapeType == FlatPhysics::ShapeType::Box) {
 
                 FlatPhysics::FlatConverter::toVector2fArray(body->getTransformedVertices(), vertexBuffer);
 
-                window.drawPolygonWithBorder(vertexBuffer, outlineColors[i], 0.1, colors[i]);
+                window.drawPolygonWithBorder(vertexBuffer, outlineColors[i], 0.05f, colors[i]);
             }
 
         }
@@ -216,8 +246,11 @@ int main() {
     Game game;
 
     while (game.isOpen()) {
+
         game.update();
+        globalStopwatch.start();
         game.draw();
+        globalStopwatch.stop();
     }
 
 }
