@@ -8,41 +8,71 @@
 #define FLATMATH_HPP
 
 #include <vector>
+#include <cmath>
+#include "FlatVector.hpp"
 
 namespace FlatPhysics {
 
     // Forward Declaration of FlatVector
-    struct FlatVector;
+    // struct FlatVector;
 
     class FlatMath {
     public:
 
-        static constexpr float FloatMax = 3.402823466e+38F; // Maximum value of a float
-        static constexpr float FloatMin = 1.175494351e-38F; // Minimum value of a float
-
+        static constexpr float FloatMax = 3.4028235e+38F; // Maximum value of a float
+        static constexpr float FloatMin = -3.4028235e+38F; // Minimum value of a float
 
         // Dot Product
-        static float DotProduct(const FlatVector& v1, const FlatVector& v2);
+        static inline float DotProduct(const FlatVector& v1, const FlatVector& v2) {
+            return v1.x * v2.x + v1.y * v2.y;
+        }
 
         // Cross Product
-        static float CrossProduct(const FlatVector& v1, const FlatVector& v2);
+        static inline float CrossProduct(const FlatVector& v1, const FlatVector& v2) {
+            return v1.x * v2.y - v1.y * v2.x;
+        }
 
         // Lenght of a vector
-        static float Length(const FlatVector& v);
+        static inline float Length(const FlatVector& v) {
+            return sqrt(v.x * v.x + v.y * v.y);
+        }
 
         // Normalize a vector
-        static FlatVector Normalize(const FlatVector& v);
+        static inline FlatVector Normalize(const FlatVector& v) {
+            float len = Length(v);
+            return FlatVector(v.x / len, v.y / len);
+        }
 
         // Distance between two points
-        static float Distance(const FlatVector& v1, const FlatVector& v2);
+        static inline float Distance(const FlatVector& v1, const FlatVector& v2) {
+            return Length(v1 - v2);
+        }
+
+        // Squared Distance between two points
+        static inline float SquaredDistance(const FlatVector& v1, const FlatVector& v2) {
+            return (v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y);
+        }
 
         // Clamp
-        static float Clamp(float value, float min, float max);
+        template <typename T>
+        static T Clamp(T value, T min, T max) {
+            if (value < min) return min;
+            if (value > max) return max;
+            return value;
+        }
 
         static FlatVector ArtimeticMean(const std::vector<FlatVector>& vertices);
 
+        // Edge between two points
+        static inline FlatVector EdgeBetween(const FlatVector& p1, const FlatVector& p2) {
+            /*
+                Edge from point 1 to point 2:
+                Edge = Point 2 - Point 1
+            */
+            return p2 - p1;
+        }
 
     };
-}
+} // namespace FlatPhysics
 
 #endif // FLATMATH_HPP
