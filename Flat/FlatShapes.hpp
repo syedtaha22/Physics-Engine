@@ -6,6 +6,9 @@
 
 namespace Flat {
 
+    static constexpr float pixelPerMeter = 100.0f; // 100 pixels per meter (adjust based on zoom level)
+
+
     // Base Shape Struct
     struct Shape {
         // Border properties
