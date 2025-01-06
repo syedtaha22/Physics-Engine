@@ -53,6 +53,7 @@ namespace Flat {
         static const Color White;
         static const Color Black;
         static const Color Yellow;
+        static const Color Orange;
         static const Color Transparent;
 
         // Conversion to SFML Color
@@ -68,6 +69,7 @@ namespace Flat {
     const Color Color::White = Color(255, 255, 255);
     const Color Color::Black = Color(0, 0, 0);
     const Color Color::Yellow = Color(255, 255, 0);
+    const Color Color::Orange = Color(255, 165, 0);
     const Color Color::Transparent = Color(0, 0, 0, 0);
 
     // Overloading the << operator for debugging
