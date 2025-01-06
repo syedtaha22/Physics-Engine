@@ -22,7 +22,6 @@ namespace Flat {
         // Store last frame time
         float lastFrameTime = 0.0f;
 
-        static constexpr float pixelPerMeter = 100.0f; // 100 pixels per meter (adjust based on zoom level)
 
     public:
 
@@ -129,8 +128,8 @@ namespace Flat {
             draw(circle);
         }
 
-        void drawRectangleWithBorder(float width, float height, sf::Vector2f position, Flat::Color borderColor = Flat::Color::Transparent,
-            float borderThickness = 0, Flat::Color fillColor = Flat::Color::Transparent)
+        void drawRectangleWithBorder(float width, float height, sf::Vector2f position, Flat::Color borderColor = Flat::Color::White,
+            float borderThickness = 0.1f, Flat::Color fillColor = Flat::Color::Transparent)
         {
             Flat::Rectangle rectangle(width, height, position.x, position.y, borderColor, borderThickness, fillColor);
             draw(rectangle);
@@ -154,10 +153,20 @@ namespace Flat {
             draw(polygon);
         }
 
-        void drawLine(sf::Vector2f point1, sf::Vector2f point2, float thickness, Flat::Color color = Flat::Color::White) {
+        void drawLine(sf::Vector2f point1, sf::Vector2f point2, float thickness,
+            Flat::Color color = Flat::Color::White) {
             Flat::Line line(point1, point2, thickness, color);
             draw(line);
         }
+
+        void writeText(const std::string& text, sf::Vector2f position, Flat::Color color = Flat::Color::White,
+            int size = 24, bool setOriginToCenter = true)
+        {
+            Flat::Text textObj(text, position, color, size, setOriginToCenter);
+            draw(textObj);
+        }
+
+
 
         void zoom(float factor) {
             zoomLevel *= factor;
