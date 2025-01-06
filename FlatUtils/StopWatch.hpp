@@ -46,6 +46,12 @@ namespace FlatUtils {
             end_time = std::chrono::steady_clock::time_point();   // Set to 0
         }
 
+        // Restart the stopwatch
+        void restart() {
+            reset();
+            start();
+        }
+
         // Get elapsed time in seconds
         double getElapsedTimeInSeconds() {
             if (running) {
