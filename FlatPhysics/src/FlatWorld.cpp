@@ -53,6 +53,14 @@ void FlatPhysics::FlatWorld::step(float time, size_t iterations) {
     FlatPhysics::FlatBody* bodyA = nullptr;
     FlatPhysics::FlatBody* bodyB = nullptr;
 
+    // Make contact points, only once instead of in each loop
+    FlatVector contact1 = FlatVector::Zero;
+    FlatVector contact2 = FlatVector::Zero;
+    int contactCount = 0;
+
+    // Clear the contact points
+    contactPoints.clear();
+
 
     for (size_t it = 0; it < iterations; it++) {
         // Move
@@ -74,7 +82,7 @@ void FlatPhysics::FlatWorld::step(float time, size_t iterations) {
                 // Check if both bodies are static
                 if (bodyA->isStatic && bodyB->isStatic) continue;
 
-                if (collides(bodyA, bodyB, normal, depth)) {
+                if (FlatCollisions::collides(bodyA, bodyB, normal, depth)) {
                     if (bodyA->isStatic) bodyB->move(normal * depth); // If body A is static, move body B
                     else if (bodyB->isStatic) bodyA->move(-normal * depth);// If body B is static, move body A
                     else { // If both are dynamic, move both
@@ -82,7 +90,8 @@ void FlatPhysics::FlatWorld::step(float time, size_t iterations) {
                         bodyB->move(normal * (depth / 2.0f));
                     }
 
-                    contactList.emplace_back(bodyA, bodyB, depth, normal, FlatVector::Zero, FlatVector::Zero, 0);
+                    FlatCollisions::getCollisionPoints(bodyA, bodyB, contact1, contact2, contactCount);
+                    contactList.emplace_back(bodyA, bodyB, depth, normal, contact1, contact2, contactCount);
 
                 }
 
@@ -92,6 +101,14 @@ void FlatPhysics::FlatWorld::step(float time, size_t iterations) {
         // Resolve Collisions
         for (size_t i = 0; i < contactList.size(); i++) {
             resolveCollisions(contactList[i]);
+
+            if (contactList[i].contactCount > 0) {
+                contactPoints.push_back(contactList[i].contact1);
+                if (contactList[i].contactCount > 1) {
+                    contactPoints.push_back(contactList[i].contact2);
+                }
+            }
+
         }
 
         FlatWorld::worldStopwatch.stop();

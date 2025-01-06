@@ -37,6 +37,8 @@ namespace FlatPhysics {
         static constexpr size_t MinIterations = 1;
         static constexpr size_t MaxIterations = 128;
 
+
+        // For Testing
         static FlatUtils::Stopwatch worldStopwatch;
         std::vector<FlatVector> contactPoints;
 
