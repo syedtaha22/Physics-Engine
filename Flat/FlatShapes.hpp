@@ -152,6 +152,78 @@ namespace Flat {
         void applyBorder() override {}
     };
 
+    struct Text : public Shape {
+        sf::Text text;
+        static sf::Font font; // Shared font for all Text objects
+
+        // Static font loader (to ensure the font is loaded once)
+        static void loadFont() {
+            static bool isLoaded = false;
+            if (!isLoaded) {
+                if (!font.loadFromFile("Flat/Resources/Fonts/Roboto/Roboto-Regular.ttf")) {
+                    throw std::runtime_error("Failed to load font for Text!");
+                }
+                isLoaded = true;
+            }
+        }
+
+        // Constructor now takes text, position, color, and size directly
+        Text(const std::string& content, const sf::Vector2f& position, Flat::Color color = Flat::Color::White,
+            float textSizeInMeters = 0.2f, bool setOriginToCenter = true)
+        {
+            loadFont(); // Ensure font is loaded
+
+            // Print the font name
+            // std::cout << font.getInfo().family << std::endl;
+
+            text.setFont(font);
+            text.setString(content);
+            text.setFillColor(color.toSFML());
+            text.setCharacterSize(static_cast<unsigned int>(textSizeInMeters * pixelPerMeter));
+            text.setScale(1.0f / pixelPerMeter, -1.0f / pixelPerMeter); // Inverse scaling for consistency
+
+            if (setOriginToCenter) {
+                // Set the origin to the center of the text
+                sf::FloatRect textBounds = text.getLocalBounds();
+
+                // Set the origin to the center of the text
+                text.setOrigin(
+                    textBounds.left + textBounds.width / 2.0f,
+                    textBounds.top + textBounds.height / 2.0f);
+            }
+
+            text.setPosition(position);
+        }
+
+        sf::Drawable& getShape() override {
+            return text;
+        }
+
+        // Static method to calculate text size in pixel-meters
+        static sf::Vector2f getTextSize(const std::string& content, float textSizeInMeters = 0.2f) {
+            loadFont(); // Ensure font is loaded
+
+            sf::Text textObj;
+            textObj.setFont(font);
+            textObj.setString(content);
+
+            // Set the character size in pixels, based on the text size in meters
+            textObj.setCharacterSize(static_cast<unsigned int>(textSizeInMeters * pixelPerMeter));
+
+            // Get the bounds of the text in pixels
+            sf::FloatRect textBounds = textObj.getLocalBounds();
+
+            // Return the size in "pixel-meters" by dividing by the pixelPerMeter
+            return sf::Vector2f(textBounds.width / pixelPerMeter, textBounds.height / pixelPerMeter);
+        }
+
+        void applyBorder() override {}
+    };
+
+    // Define the static font outside the class
+    sf::Font Text::font;
+
+
 } // namespace Flat
 
 #endif // FLAT_SHAPES_HPP
