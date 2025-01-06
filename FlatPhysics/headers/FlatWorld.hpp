@@ -38,6 +38,7 @@ namespace FlatPhysics {
         static constexpr size_t MaxIterations = 128;
 
         static FlatUtils::Stopwatch worldStopwatch;
+        std::vector<FlatVector> contactPoints;
 
 
         // Constructor
@@ -53,8 +54,6 @@ namespace FlatPhysics {
         void step(float time, size_t iterations = MinIterations);
 
         void resolveCollisions(const FlatManifold& collisionManifold);
-
-        bool collides(FlatBody*& bodyA, FlatBody*& bodyB, FlatVector& normal, float& depth);
 
         size_t numBodies() const;
 

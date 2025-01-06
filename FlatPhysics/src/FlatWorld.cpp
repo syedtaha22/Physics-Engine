@@ -142,41 +142,6 @@ void FlatPhysics::FlatWorld::resolveCollisions(const FlatManifold& collisionMani
     bodyB->linearVelocity += impulse * bodyB->inverseMass;
 }
 
-bool FlatPhysics::FlatWorld::collides(FlatBody*& bodyA, FlatBody*& bodyB,
-    FlatVector& normal, float& depth)
-{
-
-    ShapeType shapeA = bodyA->shapeType;
-    ShapeType shapeB = bodyB->shapeType;
-
-    if (shapeA == ShapeType::Circle) {
-        if (shapeB == ShapeType::Circle) {
-            return FlatCollisions::circleCircleCollision(bodyA->getPosition(), bodyA->radius,
-                bodyB->getPosition(), bodyB->radius, normal, depth);
-        }
-        else if (shapeB == ShapeType::Box) {
-            return FlatCollisions::circlePolygonCollision(bodyA->getPosition(), bodyA->radius,
-                bodyB->getPosition(), bodyB->getTransformedVertices(), normal, depth);
-        }
-    }
-    else if (shapeA == ShapeType::Box) {
-        if (shapeB == ShapeType::Circle) {
-            bool result = FlatCollisions::circlePolygonCollision(bodyB->getPosition(), bodyB->radius,
-                bodyA->getPosition(), bodyA->getTransformedVertices(), normal, depth);
-            normal = -normal; // Reverse the normal
-            return result;
-        }
-        else if (shapeB == ShapeType::Box) {
-            return FlatCollisions::polygonPolygonCollision(
-                bodyA->getPosition(), bodyA->getTransformedVertices(),
-                bodyB->getPosition(), bodyB->getTransformedVertices(),
-                normal, depth);
-        }
-    }
-
-    return false;
-}
-
 size_t FlatPhysics::FlatWorld::numBodies() const {
     return bodies.size();
 }

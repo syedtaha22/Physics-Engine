@@ -11,8 +11,10 @@
 
 namespace FlatPhysics {
 
-    // Forward Declaration of FlatVector
+    // Forward Declaration of FlatVector and FlatBody
     struct FlatVector;
+    class FlatBody;
+
 
     class FlatCollisions {
     private:
@@ -23,6 +25,9 @@ namespace FlatPhysics {
             const FlatVector& axis, float& min, float& max);
 
         static int getClosestVertexIndex(const FlatVector& point, const std::vector<FlatVector>& vertices);
+
+        // Returns the collision point of two circles
+        static FlatVector getCollisionPoint(const FlatVector& centerA, float radiusA, const FlatVector& centerB);
 
 
     public:
@@ -42,6 +47,12 @@ namespace FlatPhysics {
         static bool circlePolygonCollision(const FlatVector& circleCenter, float radius,
             const FlatVector& polygonCenter, const std::vector<FlatVector>& vertices,
             FlatVector& normal, float& depth);
+
+        static bool collides(FlatBody*& bodyA, FlatBody*& bodyB, FlatVector& normal, float& depth);
+
+        static void getCollisionPoints(FlatBody*& bodyA, FlatBody*& bodyB,
+            FlatVector& contact1, FlatVector& contact2, int& contactCount);
+
     };
 
 
