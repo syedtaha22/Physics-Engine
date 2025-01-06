@@ -23,8 +23,15 @@ class Game {
     std::vector<Flat::Color> outlineColors;
 
     FlatUtils::Stopwatch stopwatch;
+    FlatUtils::Stopwatch sampleTimer;
 
     std::vector<sf::Vector2f> vertexBuffer;
+
+    double totalStepTime = 0.0;
+    int totalBodyCount = 0;
+    int totalSampleCount = 0;
+    std::string worldBodyCountString = "";
+    std::string worldStepTimeString = "";
 
 public:
     Game() : window(1280, 768, "Physics Engine from Scratch", Flat::Color("#333333"), 5.0f, 32) {
@@ -50,6 +57,9 @@ public:
 
         colors.push_back(Flat::Color::Green);
         outlineColors.push_back(Flat::Color::White);
+
+        // Start the stopwatch
+        sampleTimer.start();
 
     }
 
@@ -111,10 +121,6 @@ public:
                     std::cout << "Step Time: " << stopwatch.getElapsedTimeInMilliseconds() << " milliseconds" << std::endl;
                     std::cout << "Draw Time: " << globalStopwatch.getElapsedTimeInMilliseconds() << " milliseconds" << std::endl;
                     std::cout << "Internal Time: " << FlatPhysics::FlatWorld::worldStopwatch.getElapsedTimeInMilliseconds() << " milliseconds" << std::endl;
-
-                    // Print the number of allocated and deallocated objects
-                    std::cout << std::endl;
-
                     // Print the number of bodies
                     std::cout << "Number of bodies: " << world.numBodies() << std::endl;
                     std::cout << std::endl;
@@ -145,9 +151,27 @@ public:
             }
         }
 
+
+        if (this->sampleTimer.getElapsedTimeInSeconds() > 1.0) {
+            this->worldBodyCountString = "Body Count: " +
+                FlatPhysics::FlatMath::RoundToString(this->totalBodyCount / (double)this->totalSampleCount, 4);
+            this->worldStepTimeString = "Step Time: " +
+                FlatPhysics::FlatMath::RoundToString(this->totalStepTime / (double)this->totalSampleCount, 4) + " ms";
+
+            this->totalBodyCount = 0;
+            this->totalStepTime = 0;
+            this->totalSampleCount = 0;
+
+            this->sampleTimer.restart();
+        }
+
         stopwatch.start();
         world.step(window.getElapsedTimeSinceLastFrame(Flat::TimeUnit::Seconds), 20);
         stopwatch.stop();
+
+        this->totalStepTime += stopwatch.getElapsedTimeInMilliseconds();
+        this->totalBodyCount += world.numBodies();
+        this->totalSampleCount++;
 
         float bottom = window.getCameraBottom();
 
@@ -202,7 +226,35 @@ public:
 
         }
 
+
+        // Loop over the contact points
+        for (int i = 0; i < world.contactPoints.size(); i++) {
+            FlatPhysics::FlatVector contact = world.contactPoints[i];
+            window.drawRectangleWithBorder(0.5f, 0.5f,
+                FlatPhysics::FlatConverter::toVector2f(contact), Flat::Color::Orange, 0.075f);
+        }
+
+        displayStats();
+
         window.display();
+    }
+
+    void displayStats() {
+        // Get the size of the string
+        sf::Vector2f size = Flat::Text::getTextSize(this->worldBodyCountString, 1);
+
+        // Place the text on the bottom left corner
+        // Get the left and bottom of the camera
+        float left = window.getCameraLeft();
+        float bottom = window.getCameraBottom();
+        float padding = abs(window.getCameraRight() - left) * 0.03f;
+
+
+        window.writeText(this->worldBodyCountString, sf::Vector2f(left + padding, bottom + padding),
+            Flat::Color::White, 1, false);
+        window.writeText(this->worldStepTimeString, sf::Vector2f(left + padding, 0.5f + bottom + padding + size.y),
+            Flat::Color::White, 1, false);
+
     }
 
     bool isOpen() {
