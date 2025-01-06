@@ -9,6 +9,9 @@
 
 #include <vector>
 #include <cmath>
+#include <string>
+#include <sstream>
+#include <iomanip>
 #include "FlatVector.hpp"
 
 namespace FlatPhysics {
@@ -70,6 +73,19 @@ namespace FlatPhysics {
                 Edge = Point 2 - Point 1
             */
             return p2 - p1;
+        }
+
+        // Round a number
+        static inline float Round(float number, size_t decimalPlaces) {
+            float factor = static_cast<float>(std::pow(10, decimalPlaces));
+            return std::round(std::trunc(number * factor)) / factor;
+        }
+
+        // Round a number and return as a string
+        static inline std::string RoundToString(double number, size_t decimalPlaces) {
+            std::ostringstream oss;
+            oss << std::fixed << std::setprecision(decimalPlaces) << number;
+            return oss.str();
         }
 
     };
