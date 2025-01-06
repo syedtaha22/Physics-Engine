@@ -10,6 +10,89 @@ using std::endl;
 
 namespace FlatPhysics {
 
+    FlatVector FlatCollisions::getCollisionPoint(const FlatVector& centerA, float radiusA,
+        const FlatVector& centerB)
+    {
+        /*
+        Get the normalized direction from center A to center B
+            direction = Normalize(centerB - centerA);
+        Calculate the collision point
+            collisionPoint = centerA + direction * radiusA;
+        */
+
+        // Just do it in one line
+        return centerA + FlatMath::Normalize(centerB - centerA) * radiusA;
+    }
+
+
+    void FlatCollisions::getCollisionPoints(FlatBody*& bodyA, FlatBody*& bodyB,
+        FlatVector& contact1, FlatVector& contact2, int& contactCount)
+    {
+        // Initilize contact points
+        contact1 = FlatVector::Zero;
+        contact2 = FlatVector::Zero;
+        // Initialize contact count
+        contactCount = 0;
+
+        ShapeType shapeA = bodyA->shapeType;
+        ShapeType shapeB = bodyB->shapeType;
+
+        if (shapeA == ShapeType::Circle) {
+            if (shapeB == ShapeType::Circle) {
+                // Circle to Circle Collision, Only one contact point
+                contact1 = getCollisionPoint(bodyA->getPosition(), bodyA->radius, bodyB->getPosition());
+                contactCount = 1;
+            }
+            else if (shapeB == ShapeType::Box) {
+                // To be implemented
+            }
+        }
+        else if (shapeA == ShapeType::Box) {
+            if (shapeB == ShapeType::Circle) {
+                // To be implemented
+            }
+            else if (shapeB == ShapeType::Box) {
+                // To be implemented
+            }
+        }
+    }
+
+
+    bool FlatCollisions::collides(FlatBody*& bodyA, FlatBody*& bodyB,
+        FlatVector& normal, float& depth)
+    {
+        ShapeType shapeA = bodyA->shapeType;
+        ShapeType shapeB = bodyB->shapeType;
+
+        if (shapeA == ShapeType::Circle) {
+            if (shapeB == ShapeType::Circle) {
+                return FlatCollisions::circleCircleCollision(bodyA->getPosition(), bodyA->radius,
+                    bodyB->getPosition(), bodyB->radius, normal, depth);
+            }
+            else if (shapeB == ShapeType::Box) {
+                return FlatCollisions::circlePolygonCollision(bodyA->getPosition(), bodyA->radius,
+                    bodyB->getPosition(), bodyB->getTransformedVertices(), normal, depth);
+            }
+        }
+        else if (shapeA == ShapeType::Box) {
+            if (shapeB == ShapeType::Circle) {
+                bool result = FlatCollisions::circlePolygonCollision(bodyB->getPosition(), bodyB->radius,
+                    bodyA->getPosition(), bodyA->getTransformedVertices(), normal, depth);
+                normal = -normal; // Reverse the normal
+                return result;
+            }
+            else if (shapeB == ShapeType::Box) {
+                return FlatCollisions::polygonPolygonCollision(
+                    bodyA->getPosition(), bodyA->getTransformedVertices(),
+                    bodyB->getPosition(), bodyB->getTransformedVertices(),
+                    normal, depth);
+            }
+        }
+
+        return false;
+    }
+
+
     void FlatCollisions::ProjectVertices(const std::vector<FlatVector>& vertices,
         const FlatVector& axis, float& min, float& max)
     {
