@@ -24,8 +24,8 @@ namespace FlatPhysics {
         FlatVector contact2;
         int contactCount;
 
-        FlatManifold(FlatBody* bodyA, FlatBody* bodyB, float depth, FlatVector normal, FlatVector
-            contact1, FlatVector contact2, int contactCount);
+        FlatManifold(FlatBody* bodyA, FlatBody* bodyB, float depth, const FlatVector& normal,
+            const FlatVector& contact1, const FlatVector& contact2, int contactCount);
 
 
     };
