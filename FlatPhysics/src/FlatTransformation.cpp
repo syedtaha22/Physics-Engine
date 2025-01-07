@@ -9,7 +9,7 @@ using std::cos;
 // Define Zero transformation
 const FlatPhysics::FlatTransformation FlatPhysics::FlatTransformation::Zero = FlatTransformation(0, 0, 0);
 
-FlatPhysics::FlatTransformation::FlatTransformation(FlatVector position, float angle) :
+FlatPhysics::FlatTransformation::FlatTransformation(const FlatVector& position, float angle) :
     PositionX(position.x), PositionY(position.y),
     sine(std::sin(angle)), cosine(std::cos(angle)) {
 }

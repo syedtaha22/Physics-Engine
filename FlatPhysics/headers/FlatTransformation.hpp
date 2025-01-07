@@ -21,7 +21,7 @@ namespace FlatPhysics {
         // Static Zero transformation
         static const FlatTransformation Zero;
 
-        FlatTransformation(FlatVector position, float angle);
+        FlatTransformation(const FlatVector& position, float angle);
 
         FlatTransformation(float x, float y, float angle);
     };
