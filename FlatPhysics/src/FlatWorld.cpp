@@ -7,6 +7,7 @@
 #include "../headers/FlatVector.hpp"
 #include "../headers/FlatCollisions.hpp"
 #include "../headers/FlatMath.hpp"
+#include "../headers/FlatAABB.hpp"
 
 
 FlatPhysics::FlatVector FlatPhysics::FlatWorld::Gravity = FlatPhysics::FlatVector(0.0f, -9.8f);
@@ -58,10 +59,14 @@ void FlatPhysics::FlatWorld::step(float time, size_t iterations) {
     FlatVector contact2 = FlatVector::Zero;
     int contactCount = 0;
 
+    // boolean for printing
+    bool print = true;
+
     // Clear the contact points
     contactPoints.clear();
 
 
+    FlatWorld::worldStopwatch.start();
     for (size_t it = 0; it < iterations; it++) {
         // Move
         for (size_t i = 0; i < bodies.size(); i++) {
@@ -72,15 +77,20 @@ void FlatPhysics::FlatWorld::step(float time, size_t iterations) {
         contactList.clear();
 
         // Collide
-        FlatWorld::worldStopwatch.start();
         for (size_t i = 0; i < bodies.size() - 1; i++) {
             bodyA = bodies[i];
+            FlatAABB bodyA_AABB = bodyA->getAABB();
 
             for (size_t j = i + 1; j < bodies.size(); j++) {
                 bodyB = bodies[j];
+                FlatAABB bodyB_AABB = bodyB->getAABB();
+
+                if (!FlatCollisions::AABB_AABB_Collision(bodyA_AABB, bodyB_AABB)) continue;
+
 
                 // Check if both bodies are static
                 if (bodyA->isStatic && bodyB->isStatic) continue;
+
 
                 if (FlatCollisions::collides(bodyA, bodyB, normal, depth)) {
                     if (bodyA->isStatic) bodyB->move(normal * depth); // If body A is static, move body B
@@ -92,12 +102,12 @@ void FlatPhysics::FlatWorld::step(float time, size_t iterations) {
 
                     FlatCollisions::getCollisionPoints(bodyA, bodyB, contact1, contact2, contactCount);
                     contactList.emplace_back(bodyA, bodyB, depth, normal, contact1, contact2, contactCount);
-
                 }
 
-            }
-        }
 
+            }
+
+        }
         // Resolve Collisions
         for (size_t i = 0; i < contactList.size(); i++) {
             resolveCollisions(contactList[i]);
@@ -108,11 +118,9 @@ void FlatPhysics::FlatWorld::step(float time, size_t iterations) {
                     contactPoints.push_back(contactList[i].contact2);
                 }
             }
-
         }
-
-        FlatWorld::worldStopwatch.stop();
     }
+    FlatWorld::worldStopwatch.stop();
 }
 
 void FlatPhysics::FlatWorld::resolveCollisions(const FlatManifold& collisionManifold)
