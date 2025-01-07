@@ -21,6 +21,7 @@
                 "${workspaceFolder}/FlatPhysics/src/FlatWorld.cpp",
                 "${workspaceFolder}/FlatPhysics/src/FlatAABB.cpp",
                 "${workspaceFolder}/FlatPhysics/src/FlatManifold.cpp",
+                "-O3"
             ],
             "options": {
                 "cwd": "${fileDirname}"
