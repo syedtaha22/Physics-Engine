@@ -50,10 +50,9 @@ namespace FlatPhysics {
         std::vector<int> triangles;
         ShapeType const shapeType;
 
-
     private:
         // Private constructor
-        FlatBody(FlatVector position, float density, float mass, float restitution, float area,
+        FlatBody(const FlatVector& position, float density, float mass, float restitution, float area,
             bool isStatic, float radius, float width, float height, ShapeType shapeType);
 
         std::vector<int> createBoxTriangles();
@@ -66,28 +65,28 @@ namespace FlatPhysics {
         // Destructor
         ~FlatBody();
         // Get Position
-        FlatVector getPosition() const;
+        const FlatVector& getPosition() const;
 
 
         // User side functions to create a Circle body
-        static bool createCircleBody(float radius, FlatVector position, float density, bool isStatic,
+        static bool createCircleBody(float radius, const FlatVector& position, float density, bool isStatic,
             float restitution, FlatBody*& body);
 
         // User side functions to create a Box body
-        static bool createBoxBody(float width, float height, FlatVector position, float density,
+        static bool createBoxBody(float width, float height, const FlatVector& position, float density,
             bool isStatic, float restitution, FlatBody*& body);
 
-        void move(FlatVector amount);
+        void move(const FlatVector& amount);
 
-        void moveTo(FlatVector newPosition);
+        void moveTo(const FlatVector& newPosition);
 
         void rotate(float amount);
 
-        void step(float time, FlatVector gravity);
+        void step(float time, const FlatVector& gravity);
 
-        void applyForce(FlatVector force);
+        void applyForce(const FlatVector& force);
 
-        std::vector<FlatVector> getTransformedVertices();
+        const std::vector<FlatVector>& getTransformedVertices();
 
         FlatAABB getAABB() const;
     };

@@ -11,7 +11,8 @@
 
 namespace FlatPhysics {
 
-    FlatBody::FlatBody(FlatVector position, float density, float mass, float restitution, float area,
+
+    FlatBody::FlatBody(const FlatVector& position, float density, float mass, float restitution, float area,
         bool isStatic, float radius, float width, float height, ShapeType shapeType) :
         position(position), density(density), mass(mass), restitution(restitution), area(area),
         isStatic(isStatic), inverseMass(isStatic ? 0 : 1 / mass),
@@ -70,13 +71,13 @@ namespace FlatPhysics {
     FlatBody::~FlatBody() {}
 
     // Get Position
-    FlatVector FlatBody::getPosition() const {
+    const FlatVector& FlatBody::getPosition() const {
         return position;
     }
 
 
     // User side functions to create a Circle body
-    bool FlatBody::createCircleBody(float radius, FlatVector position, float density, bool isStatic,
+    bool FlatBody::createCircleBody(float radius, const FlatVector& position, float density, bool isStatic,
         float restitution, FlatBody*& body)
     {
         float area = M_PI * radius * radius;
@@ -100,7 +101,7 @@ namespace FlatPhysics {
     }
 
     // User side functions to create a Box body
-    bool FlatBody::createBoxBody(float width, float height, FlatVector position, float density,
+    bool FlatBody::createBoxBody(float width, float height, const FlatVector& position, float density,
         bool isStatic, float restitution, FlatBody*& body)
     {
 
@@ -125,13 +126,13 @@ namespace FlatPhysics {
         return true;
     }
 
-    void FlatBody::move(FlatVector amount) {
+    void FlatBody::move(const FlatVector& amount) {
 
         position += amount;
         transformedUpdateRequired = true;
     }
 
-    void FlatBody::moveTo(FlatVector newPosition) {
+    void FlatBody::moveTo(const FlatVector& newPosition) {
         position = newPosition;
         transformedUpdateRequired = true;
     }
@@ -141,7 +142,7 @@ namespace FlatPhysics {
         transformedUpdateRequired = true;
     }
 
-    void FlatBody::step(float time, FlatVector gravity) {
+    void FlatBody::step(float time, const FlatVector& gravity) {
         // Calculate acceleration
         //FlatVector acceleration = force * inverseMass;
 
@@ -159,18 +160,18 @@ namespace FlatPhysics {
         transformedUpdateRequired = true;
     }
 
-    void FlatBody::applyForce(FlatVector force) {
+    void FlatBody::applyForce(const FlatVector& force) {
         this->force = force;
     }
 
-    std::vector<FlatVector> FlatBody::getTransformedVertices() {
+    const std::vector<FlatVector>& FlatBody::getTransformedVertices() {
         if (transformedUpdateRequired) {
             // Make a transformation object
             FlatTransformation transformation(position, rotation);
             for (int i = 0; i < tranformedVertices.size(); i++) {
                 // Check if vertices are not null
                 if (vertices.size() > 0) {
-                    FlatVector v = vertices[i];
+                    const FlatVector& v = vertices[i];
                     tranformedVertices[i] = FlatVector::Transform(v, transformation);
                 }
             }
@@ -194,7 +195,7 @@ namespace FlatPhysics {
         }
         else if (shapeType == ShapeType::Box) {
             for (int i = 0; i < tranformedVertices.size(); i++) {
-                FlatVector v = tranformedVertices[i];
+                const FlatVector& v = tranformedVertices[i];
                 if (v.x < minX) minX = v.x;
                 if (v.y < minY) minY = v.y;
 
