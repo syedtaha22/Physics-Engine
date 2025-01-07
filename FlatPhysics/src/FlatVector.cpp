@@ -1,5 +1,6 @@
 #include <string>
 
+
 using std::string;
 using std::to_string;
 
@@ -9,6 +10,8 @@ using std::to_string;
 namespace FlatPhysics {
     // Define the zero vector
     FlatVector FlatVector::Zero = FlatVector(0, 0);
+    // int FlatVector::copyConstructorCalls = 0;
+    // int FlatVector::moveConstructorCalls = 0;
 
 
     FlatVector::FlatVector(float x, float y) : x(x), y(y) {}

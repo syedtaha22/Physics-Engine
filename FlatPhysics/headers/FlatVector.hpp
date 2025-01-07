@@ -6,6 +6,7 @@
 #ifndef FLAT_VECTOR_HPP
 #define FLAT_VECTOR_HPP
 
+#include <iostream>
 #include <string>
 
 namespace FlatPhysics {
@@ -19,7 +20,38 @@ namespace FlatPhysics {
         // Define zero vector
         static FlatVector Zero;
 
+        // static int copyConstructorCalls;
+        // static int moveConstructorCalls;
+
         FlatVector(float x = 0.0f, float y = 0.0f);
+
+        // // Copy Constructor
+        // FlatVector(const FlatVector& other) : x(other.x), y(other.y) {
+        //     copyConstructorCalls++;
+        // }
+
+        // // Move Constructor
+        // FlatVector(FlatVector&& other) noexcept : x(other.x), y(other.y) {
+        //     moveConstructorCalls++;
+        // }
+
+        // // Copy Assignment Operator
+        // FlatVector& operator=(const FlatVector& other) {
+        //     x = other.x;
+        //     y = other.y;
+
+        //     //copyConstructorCalls++;
+        //     return *this;
+        // }
+
+        // // Move Assignment Operator
+        // FlatVector& operator=(FlatVector&& other) noexcept {
+        //     x = other.x;
+        //     y = other.y;
+        //     //moveConstructorCalls++;
+        //     return *this;
+        // }
+
 
         FlatVector operator+(const FlatVector& other) const; // Addition
         FlatVector operator-(const FlatVector& other) const; // Subtraction
