@@ -7,8 +7,15 @@ using std::endl;
 #include "../headers/FlatVector.hpp"
 #include "../headers/FlatMath.hpp"
 #include "../headers/FlatBody.hpp"
+#include "../headers/FlatAABB.hpp"
 
 namespace FlatPhysics {
+
+    float FlatCollisions::MaxA = 0.0f;
+    float FlatCollisions::MaxB = 0.0f;
+    float FlatCollisions::MinA = 0.0f;
+    float FlatCollisions::MinB = 0.0f;
+    float FlatCollisions::AxisDepth = 0.0f;
 
     FlatVector FlatCollisions::getCollisionPoint(const FlatVector& centerA, float radiusA,
         const FlatVector& centerB)
@@ -150,13 +157,26 @@ namespace FlatPhysics {
     bool FlatCollisions::circleCircleCollision(const FlatVector& centerA, float radiusA,
         const FlatVector& centerB, float radiusB, FlatVector& normal, float& depth)
     {
+        /*
+        Initially, I was initializing the normal to zero:
+            normal = FlatVector::Zero;
 
-        // Initialize normal and depth
-        normal = FlatVector::Zero;
-        depth = 0.0f;
+        But Taking a look in to how the Distance function works,
+        It first makes a vector pointing from one point to the other, then returns the lenght of the vector.
 
-        // Calculate the distance between the two centers
-        float distance = FlatMath::Distance(centerA, centerB);
+        Later we recalculate this vector(from A to B), and normalize it to get the normal.
+
+        So, I decided to initialize the normal to the vector pointing from A to B,
+        And get the lenght of the vector to calculate the distance. This reduces the number of calculations.
+
+        */
+
+        // Calculate the vector pointing from center A to center B
+        normal = centerB - centerA;
+        depth = 0.0f; // Initialize the depth to zero
+
+        // Calculate the distance of the vector
+        float distance = FlatMath::Length(normal);
 
         // Calculate the sum of the radii
         float radii = radiusA + radiusB;
@@ -164,8 +184,8 @@ namespace FlatPhysics {
         // Check if the distance is greater than the sum of the radii, then the circles are not colliding
         if (distance >= radii) return false;
 
-        // Calculate the normal
-        normal = FlatMath::Normalize(centerB - centerA);
+        // Normalize the vector to get the normal
+        normal = FlatMath::Normalize(normal);
 
         // Calculate the depth
         depth = radii - distance;
@@ -183,10 +203,10 @@ namespace FlatPhysics {
         depth = FlatMath::FloatMax;
 
         // Allocate memory for variables only once instead of in each loop
-        float minA, maxA, minB, maxB;
+        // float minA, maxA, minB, maxB;
         FlatVector edge = FlatVector::Zero;
         FlatVector axis = FlatVector::Zero;
-        float axisDepth = 0.0f;
+        // float axisDepth = 0.0f;
 
         // Loop over body A vertices
         for (int i = 0; i < verticesA.size(); i++) {
@@ -198,18 +218,18 @@ namespace FlatPhysics {
             axis = FlatMath::Normalize(FlatVector(-edge.y, edge.x));
 
             // Project the vertices of both bodies onto the axis
-            ProjectVertices(verticesA, axis, minA, maxA);
-            ProjectVertices(verticesB, axis, minB, maxB);
+            ProjectVertices(verticesA, axis, MinA, MaxA);
+            ProjectVertices(verticesB, axis, MinB, MaxB);
 
             // Check if the projections overlap
-            if (maxA <= minB || maxB <= minA) return false;
+            if (MaxA <= MinB || MaxB <= MinA) return false;
 
             // Get the depth of the overlap
-            axisDepth = std::min(maxB - minA, maxA - minB);
+            AxisDepth = std::min(MaxB - MinA, MaxA - MinB);
 
             // Check if the depth is less than the current depth
-            if (axisDepth < depth) {
-                depth = axisDepth;
+            if (AxisDepth < depth) {
+                depth = AxisDepth;
                 normal = axis;
             }
         }
@@ -223,18 +243,18 @@ namespace FlatPhysics {
             axis = FlatMath::Normalize(FlatVector(-edge.y, edge.x));
 
             // Project the vertices of both bodies onto the axis
-            ProjectVertices(verticesA, axis, minA, maxA);
-            ProjectVertices(verticesB, axis, minB, maxB);
+            ProjectVertices(verticesA, axis, MinA, MaxA);
+            ProjectVertices(verticesB, axis, MinB, MaxB);
 
             // Check if the projections overlap
-            if (maxA <= minB || maxB <= minA) return false;
+            if (MaxA <= MinB || MaxB <= MinA) return false;
 
             // Get the depth of the overlap
-            axisDepth = std::min(maxB - minA, maxA - minB);
+            AxisDepth = std::min(MaxB - MinA, MaxA - MinB);
 
             // Check if the depth is less than the current depth
-            if (axisDepth < depth) {
-                depth = axisDepth;
+            if (AxisDepth < depth) {
+                depth = AxisDepth;
                 normal = axis;
             }
         }
@@ -266,10 +286,10 @@ namespace FlatPhysics {
         depth = FlatMath::FloatMax;
 
         // Allocate memory for variables only once instead of in each loop
-        float minA, maxA, minB, maxB;
+        // float minA, maxA, minB, maxB;
         FlatVector axis = FlatVector::Zero;
         FlatVector edge = FlatVector::Zero;
-        float axisDepth = 0.0f;
+        // float axisDepth = 0.0f;
 
         for (int i = 0; i < vertices.size(); i++) {
             // Get the edge from the current vertex to the next vertex        
@@ -279,20 +299,19 @@ namespace FlatPhysics {
             axis = FlatMath::Normalize(FlatVector(-edge.y, edge.x));
 
             // Project the vertices of the polygon onto the axis
-            ProjectVertices(vertices, axis, minA, maxA);
-
+            ProjectVertices(vertices, axis, MinA, MaxA);
             // Project the circle onto the axis
-            ProjectCircle(circleCenter, radius, axis, minB, maxB);
+            ProjectCircle(circleCenter, radius, axis, MinB, MaxB);
 
             // Check if the projections overlap
-            if (maxA <= minB || maxB <= minA) return false;
+            if (MaxA <= MinB || MaxB <= MinA) return false;
 
             // Get the depth of the overlap
-            axisDepth = std::min(maxB - minA, maxA - minB);
+            AxisDepth = std::min(MaxB - MinA, MaxA - MinB);
 
             // Check if the depth is less than the current depth
-            if (axisDepth < depth) {
-                depth = axisDepth;
+            if (AxisDepth < depth) {
+                depth = AxisDepth;
                 normal = axis;
             }
         }
@@ -303,19 +322,19 @@ namespace FlatPhysics {
         axis = FlatMath::Normalize(vertices[closestVertex] - circleCenter);
 
         // Project the vertices of the polygon onto the axis
-        ProjectVertices(vertices, axis, minA, maxA);
+        ProjectVertices(vertices, axis, MinA, MaxA);
         // Project the circle onto the axis
-        ProjectCircle(circleCenter, radius, axis, minB, maxB);
+        ProjectCircle(circleCenter, radius, axis, MinB, MaxB);
 
         // Check if the projections overlap
-        if (maxA <= minB || maxB <= minA) return false;
+        if (MaxA <= MinB || MaxB <= MinA) return false;
 
         // Get the depth of the overlap
-        axisDepth = std::min(maxB - minA, maxA - minB);
+        AxisDepth = std::min(MaxB - MinA, MaxA - MinB);
 
         // Check if the depth is less than the current depth
-        if (axisDepth < depth) {
-            depth = axisDepth;
+        if (AxisDepth < depth) {
+            depth = AxisDepth;
             normal = axis;
         }
 
@@ -339,6 +358,14 @@ namespace FlatPhysics {
         if (FlatMath::DotProduct(edge, normal) < 0) normal = -normal;
 
         return true; // Return true since the bodies are colliding
+    }
+
+    bool FlatCollisions::AABB_AABB_Collision(const FlatAABB& a, const FlatAABB& b)
+    {
+        if (a.max->x <= b.min->x || b.max->x <= a.min->x) return false;
+        if (a.max->y <= b.min->y || b.max->y <= a.min->y) return false;
+
+        return true;
     }
 
 
