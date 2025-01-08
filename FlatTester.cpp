@@ -13,7 +13,6 @@
 // global stopwatch
 FlatUtils::Stopwatch globalStopwatch;
 
-
 class Game {
     Flat::Window window;
 
@@ -42,7 +41,6 @@ public:
         window.getCameraExtent(left, right, top, bottom);
         float padding = abs(right - left) * 0.1f;
 
-
         FlatPhysics::FlatBody* body = nullptr;
 
         // Make a ground object
@@ -50,7 +48,6 @@ public:
             FlatPhysics::FlatVector(0.0f, -10.f), 10.f, true, 0.5f, body)) {
             throw std::runtime_error("Error creating ground body");
         }
-
 
         // Add the body to the world
         world.addBody(body);
@@ -62,7 +59,6 @@ public:
         sampleTimer.start();
 
     }
-
 
     void update() {
         sf::Event event;
@@ -79,12 +75,12 @@ public:
             }
 
             if (event.type == (int)Flat::Event::MouseButtonPressed) {
-                FlatPhysics::FlatVector position = FlatPhysics::FlatConverter::toFlatVector(Flat::Mouse::getPosition(window));
+                FlatPhysics::FlatVector position =
+                    FlatPhysics::FlatConverter::toFlatVector(Flat::Mouse::getPosition(window));
 
                 // If the left mouse button is clicked, add a circle
                 if (Flat::Mouse::isLeftButtonClicked()) {
                     float radius = FlatUtils::Random::randomFloat(0.75f, 1.5f);
-                    FlatPhysics::FlatVector position = FlatPhysics::FlatConverter::toFlatVector(Flat::Mouse::getPosition(window));
 
                     FlatPhysics::FlatBody* body = nullptr;
 
@@ -102,7 +98,6 @@ public:
                     float height = FlatUtils::Random::randomFloat(1.0f, 2.0f);
 
                     FlatPhysics::FlatBody* body = nullptr;
-
 
                     if (!FlatPhysics::FlatBody::createBoxBody(width, height, position, 2.0f, false, 0.6f, body)) {
                         throw std::runtime_error("Error creating box body");
@@ -183,14 +178,17 @@ public:
                 throw std::runtime_error("Error getting body at index " + std::to_string(i));
             }
 
-            // Get the position
-            FlatPhysics::FlatAABB aabb = body->getAABB();
-            //std::cout << "Body " << i << " AABB: " << aabb.min->x << ", " << aabb.min->y << " - " << aabb.max->x << ", " << aabb.max->y << std::endl;
-            // Check if the body is out of bounds
-            if (aabb.max->y < bottom) {
-                world.removeBody(i);
-                colors.erase(colors.begin() + i);
-                outlineColors.erase(outlineColors.begin() + i);
+            // If the body is not static
+            if (!body->isStatic) {
+                // Get the position
+                FlatPhysics::FlatAABB aabb = body->getAABB();
+                //std::cout << "Body " << i << " AABB: " << aabb.min->x << ", " << aabb.min->y << " - " << aabb.max->x << ", " << aabb.max->y << std::endl;
+                // Check if the body is out of bounds
+                if (aabb.max->y < bottom) {
+                    world.removeBody(i);
+                    colors.erase(colors.begin() + i);
+                    outlineColors.erase(outlineColors.begin() + i);
+                }
             }
         }
 
@@ -228,10 +226,9 @@ public:
 
 
         // Loop over the contact points
-        for (int i = 0; i < world.contactPoints.size(); i++) {
-            FlatPhysics::FlatVector contact = world.contactPoints[i];
-            window.drawRectangleWithBorder(0.5f, 0.5f,
-                FlatPhysics::FlatConverter::toVector2f(contact), Flat::Color::Orange, 0.075f);
+        for (const FlatPhysics::FlatVector& contact : world.contactPoints) {
+            window.drawCircleFilled(0.1f,
+                FlatPhysics::FlatConverter::toVector2f(contact), Flat::Color::Red);
         }
 
         displayStats();
