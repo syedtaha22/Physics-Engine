@@ -69,13 +69,9 @@ namespace FlatPhysics {
         return FlatVector(-x, -y);
     }
 
-
-
     FlatVector operator*(float scalar, const FlatVector& vector) {
         return FlatVector(vector.x * scalar, vector.y * scalar);
     }
-
-
 
     bool FlatVector::operator==(const FlatVector& other) const {
         return x == other.x && y == other.y;
