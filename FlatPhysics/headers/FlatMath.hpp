@@ -20,6 +20,7 @@ namespace FlatPhysics {
     // struct FlatVector;
 
     class FlatMath {
+
     public:
 
         static constexpr float FloatMax = 3.4028235e+38F; // Maximum value of a float
@@ -86,6 +87,16 @@ namespace FlatPhysics {
             std::ostringstream oss;
             oss << std::fixed << std::setprecision(decimalPlaces) << number;
             return oss.str();
+        }
+
+
+        static inline bool NearlyEqual(float a, float b, float epsilon) {
+            return std::abs(a - b) < epsilon;
+        }
+
+        // Check if two vectors are nearly equal
+        static inline bool NearlyEqual(const FlatVector& v1, const FlatVector& v2, float epsilon) {
+            return NearlyEqual(v1.x, v2.x, epsilon) && NearlyEqual(v1.y, v2.y, epsilon);
         }
 
     };
