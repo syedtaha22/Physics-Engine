@@ -29,6 +29,12 @@ namespace FlatPhysics {
         static float AxisDepth;
 
     private:
+        // Get Closest Point on the segment to the point
+        static FlatVector getClosestPointOnSegment(const FlatVector& start,
+            const FlatVector& end, const FlatVector& point, float& squaredDistance);
+
+
+        // Project vertices onto an axis
         static void ProjectVertices(const std::vector<FlatVector>& vertices,
             const FlatVector& axis, float& min, float& max);
 
@@ -37,8 +43,19 @@ namespace FlatPhysics {
 
         static int getClosestVertexIndex(const FlatVector& point, const std::vector<FlatVector>& vertices);
 
-        // Returns the collision point of two circles
-        static FlatVector getCollisionPoint(const FlatVector& centerA, float radiusA, const FlatVector& centerB);
+        // Find the collision point of two circles
+        static void findCollisionPoint(const FlatVector& centerA, float radiusA, const FlatVector& centerB,
+            FlatVector& closestPoint);
+
+        // Find the collision point of a circle and a polygon
+        static void findCollisionPoint(const FlatVector& circleCenter, float radius,
+            const FlatVector& polygonCenter, const std::vector<FlatVector>& vertices, FlatVector& closestPoint);
+
+        // Find the collision points of two polygons
+        static void findCollisionPoints(const std::vector<FlatVector>& verticesA,
+            const std::vector<FlatVector>& verticesB, FlatVector& contact1, FlatVector& contact2,
+            int& contactCount);
+
 
         // Check if two circles are colliding
         static bool circleCircleCollision(const FlatVector& centerA, float radiusA,

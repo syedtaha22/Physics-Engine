@@ -17,8 +17,51 @@ namespace FlatPhysics {
     float FlatCollisions::MinB = 0.0f;
     float FlatCollisions::AxisDepth = 0.0f;
 
-    FlatVector FlatCollisions::getCollisionPoint(const FlatVector& centerA, float radiusA,
-        const FlatVector& centerB)
+
+    FlatVector FlatCollisions::getClosestPointOnSegment(const FlatVector& start,
+        const FlatVector& end, const FlatVector& point, float& squaredDistance)
+    {
+
+        FlatVector direction = end - start; // Get the direction of the segment
+        FlatVector fromStart = point - start; // Get the vector from the start to the point
+
+        // Calculate the distance
+        float d = FlatMath::DotProduct(fromStart, direction) / FlatMath::DotProduct(direction, direction);
+        d = FlatMath::Clamp(d, 0.0f, 1.0f); // Clamp the distance to the segment
+
+        FlatVector closestPoint = start + direction * d; // Calculate the closest point
+
+        // Calculate squared distance
+        squaredDistance = FlatMath::SquaredDistance(point, closestPoint);
+
+        return closestPoint; // Return the closest point
+    }
+
+    void FlatCollisions::findCollisionPoint(const FlatVector& circleCenter, float radius,
+        const FlatVector& polygonCenter, const std::vector<FlatVector>& vertices, FlatVector& contactPoint)
+    {
+        float minDistance = FlatMath::FloatMax;
+        float distance_squared = 0.0f;
+
+        // Loop over the Vertices of the Polygon
+        for (int i = 0; i < vertices.size(); i++) {
+            // Get the start of the segment
+            const FlatVector& start = vertices[i];
+            // Get the end of the segment
+            const FlatVector& end = vertices[(i + 1) % vertices.size()];
+
+            // Get the closest point on the segment to the circle center
+            FlatVector closestPoint = getClosestPointOnSegment(start, end, circleCenter, distance_squared);
+
+            if (distance_squared < minDistance) {
+                minDistance = distance_squared;
+                contactPoint = closestPoint;
+            }
+        }
+    }
+
+    void FlatCollisions::findCollisionPoint(const FlatVector& centerA, float radiusA,
+        const FlatVector& centerB, FlatVector& closestPoint)
     {
         /*
         Get the normalized direction from center A to center B
@@ -28,9 +71,8 @@ namespace FlatPhysics {
         */
 
         // Just do it in one line
-        return centerA + FlatMath::Normalize(centerB - centerA) * radiusA;
+        closestPoint = centerA + FlatMath::Normalize(centerB - centerA) * radiusA;
     }
-
 
     void FlatCollisions::getCollisionPoints(FlatBody*& bodyA, FlatBody*& bodyB,
         FlatVector& contact1, FlatVector& contact2, int& contactCount)
@@ -47,19 +89,79 @@ namespace FlatPhysics {
         if (shapeA == ShapeType::Circle) {
             if (shapeB == ShapeType::Circle) {
                 // Circle to Circle Collision, Only one contact point
-                contact1 = getCollisionPoint(bodyA->getPosition(), bodyA->radius, bodyB->getPosition());
+                findCollisionPoint(bodyA->getPosition(), bodyA->radius, bodyB->getPosition(), contact1);
                 contactCount = 1;
             }
             else if (shapeB == ShapeType::Box) {
-                // To be implemented
+                findCollisionPoint(bodyA->getPosition(), bodyA->radius,
+                    bodyB->getPosition(), bodyB->getTransformedVertices(), contact1);
+                contactCount = 1;
             }
         }
         else if (shapeA == ShapeType::Box) {
             if (shapeB == ShapeType::Circle) {
-                // To be implemented
+                findCollisionPoint(bodyB->getPosition(), bodyB->radius,
+                    bodyA->getPosition(), bodyA->getTransformedVertices(), contact1);
+                contactCount = 1;
             }
             else if (shapeB == ShapeType::Box) {
-                // To be implemented
+                findCollisionPoints(bodyA->getTransformedVertices(), bodyB->getTransformedVertices(),
+                    contact1, contact2, contactCount);
+            }
+        }
+    }
+
+    void FlatCollisions::findCollisionPoints(const std::vector<FlatVector>& verticesA,
+        const std::vector<FlatVector>& verticesB, FlatVector& contact1, FlatVector& contact2,
+        int& contactCount)
+    {
+        FlatVector closestPointOnSegment;
+
+        float minDistance = FlatMath::FloatMax;
+
+        float distance_squared = 0.0f;
+
+        for (int i = 0; i < verticesA.size(); i++) {
+            for (int j = 0; j < verticesB.size(); j++) {
+                const FlatVector& segment_start = verticesB[j];
+                const FlatVector& segment_end = verticesB[(j + 1) % verticesB.size()];
+
+                closestPointOnSegment = getClosestPointOnSegment(segment_start,
+                    segment_end, verticesA[i], distance_squared);
+
+                if (FlatMath::NearlyEqual(distance_squared, minDistance, 0.0001f)) {
+                    if (!FlatMath::NearlyEqual(closestPointOnSegment, contact1, 0.0001f)) {
+                        contact2 = closestPointOnSegment;
+                        contactCount = 2;
+                    }
+                }
+                else if (distance_squared < minDistance) {
+                    minDistance = distance_squared;
+                    contact1 = closestPointOnSegment;
+                    contactCount = 1;
+                }
+            }
+        }
+
+        for (int i = 0; i < verticesB.size();i++) {
+            for (int j = 0; j < verticesA.size(); j++) {
+                const FlatVector& segment_start = verticesA[j];
+                const FlatVector& segment_end = verticesA[(j + 1) % verticesA.size()];
+
+                closestPointOnSegment = getClosestPointOnSegment(segment_start,
+                    segment_end, verticesB[i], distance_squared);
+
+                if (FlatMath::NearlyEqual(distance_squared, minDistance, 0.0001f)) {
+                    if (!FlatMath::NearlyEqual(closestPointOnSegment, contact1, 0.0001f)) {
+                        contact2 = closestPointOnSegment;
+                        contactCount = 2;
+                    }
+                }
+                else if (distance_squared < minDistance) {
+                    minDistance = distance_squared;
+                    contact1 = closestPointOnSegment;
+                    contactCount = 1;
+                }
             }
         }
     }
