@@ -34,21 +34,26 @@ namespace FlatPhysics {
         bool transformedUpdateRequired;
 
     public:
-        float const density;
-        float const mass;
-        float const inverseMass;
-        float const restitution;
-        float const area;
+        ShapeType const shapeType;
 
-        bool const isStatic;
+        float const density;
+        float const area;
+        float const restitution;
 
         float const radius;
         float const height;
         float const width;
 
+        bool const isStatic;
+
+        float const mass;
+        float const inverseMass;
+
+        float const inertia;
+        float const inverseInertia;
+
         FlatVector linearVelocity;
         std::vector<int> triangles;
-        ShapeType const shapeType;
 
     private:
         // Private constructor
@@ -59,6 +64,8 @@ namespace FlatPhysics {
 
         // Function to get the vertices from the width and height
         std::vector<FlatVector> createVertices(float& width, float& height);
+
+        float calculateInertia();
 
     public:
 

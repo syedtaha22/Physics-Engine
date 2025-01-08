@@ -16,7 +16,8 @@ namespace FlatPhysics {
         bool isStatic, float radius, float width, float height, ShapeType shapeType) :
         position(position), density(density), mass(mass), restitution(restitution), area(area),
         isStatic(isStatic), inverseMass(isStatic ? 0 : 1 / mass),
-        radius(radius), width(width), height(height), shapeType(shapeType)
+        radius(radius), width(width), height(height), shapeType(shapeType), inertia(calculateInertia()),
+        inverseInertia(isStatic ? 0 : 1 / inertia)
     {
 
         this->linearVelocity = FlatVector::Zero;
@@ -37,6 +38,18 @@ namespace FlatPhysics {
         }
 
         transformedUpdateRequired = true;
+    }
+
+    float FlatBody::calculateInertia() {
+        if (shapeType == ShapeType::Circle) {
+            return 0.5f * mass * radius * radius;
+        }
+        else if (shapeType == ShapeType::Box) {
+            return (mass * (width * width + height * height)) / 12;
+        }
+        else {
+            throw std::runtime_error("Invalid Shape Type");
+        }
     }
 
     std::vector<int> FlatBody::createBoxTriangles() {
