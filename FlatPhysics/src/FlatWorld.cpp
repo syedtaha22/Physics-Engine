@@ -113,9 +113,16 @@ void FlatPhysics::FlatWorld::step(float time, size_t iterations) {
             resolveCollisions(contactList[i]);
 
             if (contactList[i].contactCount > 0) {
-                contactPoints.push_back(contactList[i].contact1);
+                // See if the contact1 is already in the list
+                if (std::find(contactPoints.begin(), contactPoints.end(),
+                    contactList[i].contact1) == contactPoints.end())
+                    contactPoints.push_back(contactList[i].contact1);
+
                 if (contactList[i].contactCount > 1) {
-                    contactPoints.push_back(contactList[i].contact2);
+                    // See if the contact2 is already in the list
+                    if (std::find(contactPoints.begin(), contactPoints.end(),
+                        contactList[i].contact2) == contactPoints.end())
+                        contactPoints.push_back(contactList[i].contact2);
                 }
             }
         }
