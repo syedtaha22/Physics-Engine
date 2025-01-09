@@ -25,7 +25,7 @@ namespace FlatPhysics {
         FlatVector position;
         FlatVector force;
 
-        float rotation;
+        float angle;
         float angularVelocity;
 
         std::vector<FlatVector> vertices;
@@ -53,19 +53,16 @@ namespace FlatPhysics {
         float const inverseInertia;
 
         FlatVector linearVelocity;
-        std::vector<int> triangles;
 
     private:
         // Private constructor
-        FlatBody(const FlatVector& position, float density, float mass, float restitution, float area,
-            bool isStatic, float radius, float width, float height, ShapeType shapeType);
+        FlatBody(float density, float mass, float inertia, float restitution, float area,
+            bool isStatic, float radius, float width, float height, const ShapeType& shapeType);
 
         std::vector<int> createBoxTriangles();
 
         // Function to get the vertices from the width and height
         std::vector<FlatVector> createVertices(float& width, float& height);
-
-        float calculateInertia();
 
     public:
 
@@ -73,14 +70,15 @@ namespace FlatPhysics {
         ~FlatBody();
         // Get Position
         const FlatVector& getPosition() const;
+        float getAngle() const;
 
 
         // User side functions to create a Circle body
-        static bool createCircleBody(float radius, const FlatVector& position, float density, bool isStatic,
+        static bool createCircleBody(float radius, float density, bool isStatic,
             float restitution, FlatBody*& body);
 
         // User side functions to create a Box body
-        static bool createBoxBody(float width, float height, const FlatVector& position, float density,
+        static bool createBoxBody(float width, float height, float density,
             bool isStatic, float restitution, FlatBody*& body);
 
         void move(const FlatVector& amount);
@@ -95,7 +93,7 @@ namespace FlatPhysics {
 
         const std::vector<FlatVector>& getTransformedVertices();
 
-        FlatAABB getAABB() const;
+        FlatAABB getAABB();
     };
 }
 

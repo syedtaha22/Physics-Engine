@@ -12,44 +12,29 @@
 namespace FlatPhysics {
 
 
-    FlatBody::FlatBody(const FlatVector& position, float density, float mass, float restitution, float area,
-        bool isStatic, float radius, float width, float height, ShapeType shapeType) :
-        position(position), density(density), mass(mass), restitution(restitution), area(area),
+    FlatBody::FlatBody(float density, float mass, float inertia, float restitution, float area,
+        bool isStatic, float radius, float width, float height, const ShapeType& shapeType) :
+        density(density), mass(mass), restitution(restitution), area(area),
         isStatic(isStatic), inverseMass(isStatic ? 0 : 1 / mass),
-        radius(radius), width(width), height(height), shapeType(shapeType), inertia(calculateInertia()),
+        radius(radius), width(width), height(height), shapeType(shapeType), inertia(inertia),
         inverseInertia(isStatic ? 0 : 1 / inertia)
     {
-
+        this->position = FlatVector::Zero;
         this->linearVelocity = FlatVector::Zero;
         this->force = FlatVector::Zero;
-        this->rotation = 0;
+        this->angle = 0;
         this->angularVelocity = 0;
 
         if (shapeType == ShapeType::Circle) {
             vertices = std::vector<FlatVector>();
             tranformedVertices = std::vector<FlatVector>();
-            triangles = std::vector<int>();
         }
         else {
             vertices = createVertices(width, height);
-            // Allocate memory for transformed vertices
             tranformedVertices = std::vector<FlatVector>(vertices.size());
-            triangles = createBoxTriangles();
         }
 
         transformedUpdateRequired = true;
-    }
-
-    float FlatBody::calculateInertia() {
-        if (shapeType == ShapeType::Circle) {
-            return 0.5f * mass * radius * radius;
-        }
-        else if (shapeType == ShapeType::Box) {
-            return (mass * (width * width + height * height)) / 12;
-        }
-        else {
-            throw std::runtime_error("Invalid Shape Type");
-        }
     }
 
     std::vector<int> FlatBody::createBoxTriangles() {
@@ -88,10 +73,13 @@ namespace FlatPhysics {
         return position;
     }
 
+    float FlatBody::getAngle() const {
+        return angle;
+    }
+
 
     // User side functions to create a Circle body
-    bool FlatBody::createCircleBody(float radius, const FlatVector& position, float density, bool isStatic,
-        float restitution, FlatBody*& body)
+    bool FlatBody::createCircleBody(float radius, float density, bool isStatic, float restitution, FlatBody*& body)
     {
         float area = M_PI * radius * radius;
 
@@ -106,16 +94,18 @@ namespace FlatPhysics {
 
         restitution = FlatMath::Clamp(restitution, 0.0f, 1.0f);
 
+
         // Mass = density * area
         float mass = density * area;
+        float inertia = 0.5f * mass * radius * radius;
 
-        body = new FlatBody(position, density, mass, restitution, area, isStatic, radius, 0, 0, ShapeType::Circle);
+        body = new FlatBody(density, mass, inertia, restitution, area, isStatic, radius, 0, 0, ShapeType::Circle);
         return true;
     }
 
     // User side functions to create a Box body
-    bool FlatBody::createBoxBody(float width, float height, const FlatVector& position, float density,
-        bool isStatic, float restitution, FlatBody*& body)
+    bool FlatBody::createBoxBody(float width, float height, float density, bool isStatic,
+        float restitution, FlatBody*& body)
     {
 
         float area = width * height;
@@ -134,8 +124,9 @@ namespace FlatPhysics {
 
         // Mass = density * area
         float mass = density * area;
+        float inertia = (mass * (width * width + height * height)) / 12;
 
-        body = new FlatBody(position, density, mass, restitution, area, isStatic, 0, width, height, ShapeType::Box);
+        body = new FlatBody(density, mass, inertia, restitution, area, isStatic, 0, width, height, ShapeType::Box);
         return true;
     }
 
@@ -151,7 +142,7 @@ namespace FlatPhysics {
     }
 
     void FlatBody::rotate(float amount) {
-        rotation += amount;
+        angle += amount;
         transformedUpdateRequired = true;
     }
 
@@ -167,7 +158,7 @@ namespace FlatPhysics {
         position += linearVelocity * time;
 
         // Update angular velocity
-        rotation += angularVelocity * time;
+        angle += angularVelocity * time;
 
         force = FlatVector::Zero;
         transformedUpdateRequired = true;
@@ -180,7 +171,7 @@ namespace FlatPhysics {
     const std::vector<FlatVector>& FlatBody::getTransformedVertices() {
         if (transformedUpdateRequired) {
             // Make a transformation object
-            FlatTransformation transformation(position, rotation);
+            FlatTransformation transformation(position, angle);
             for (int i = 0; i < tranformedVertices.size(); i++) {
                 // Check if vertices are not null
                 if (vertices.size() > 0) {
@@ -193,7 +184,7 @@ namespace FlatPhysics {
         return tranformedVertices;
     }
 
-    FlatAABB FlatBody::getAABB() const {
+    FlatAABB FlatBody::getAABB() {
         float minX = FlatMath::FloatMax;
         float minY = FlatMath::FloatMax;
         float maxX = FlatMath::FloatMin;
@@ -207,8 +198,9 @@ namespace FlatPhysics {
             maxY = position.y + radius;
         }
         else if (shapeType == ShapeType::Box) {
-            for (int i = 0; i < tranformedVertices.size(); i++) {
-                const FlatVector& v = tranformedVertices[i];
+            const std::vector<FlatVector>& t_vertices = getTransformedVertices();
+            for (int i = 0; i < t_vertices.size(); i++) {
+                const FlatVector& v = t_vertices[i];
                 if (v.x < minX) minX = v.x;
                 if (v.y < minY) minY = v.y;
 
