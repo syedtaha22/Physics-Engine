@@ -44,15 +44,15 @@ namespace FlatPhysics {
         static int getClosestVertexIndex(const FlatVector& point, const std::vector<FlatVector>& vertices);
 
         // Find the collision point of two circles
-        static void findCollisionPoint(const FlatVector& centerA, float radiusA, const FlatVector& centerB,
+        static void findCirclesContactPoint(const FlatVector& centerA, float radiusA, const FlatVector& centerB,
             FlatVector& closestPoint);
 
         // Find the collision point of a circle and a polygon
-        static void findCollisionPoint(const FlatVector& circleCenter, float radius,
+        static void findCirclePolygonContactPoint(const FlatVector& circleCenter, float radius,
             const FlatVector& polygonCenter, const std::vector<FlatVector>& vertices, FlatVector& closestPoint);
 
         // Find the collision points of two polygons
-        static void findCollisionPoints(const std::vector<FlatVector>& verticesA,
+        static void findPolygonsContactPoints(const std::vector<FlatVector>& verticesA,
             const std::vector<FlatVector>& verticesB, FlatVector& contact1, FlatVector& contact2,
             int& contactCount);
 

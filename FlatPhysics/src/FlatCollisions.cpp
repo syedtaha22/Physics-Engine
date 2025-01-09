@@ -37,7 +37,7 @@ namespace FlatPhysics {
         return closestPoint; // Return the closest point
     }
 
-    void FlatCollisions::findCollisionPoint(const FlatVector& circleCenter, float radius,
+    void FlatCollisions::findCirclePolygonContactPoint(const FlatVector& circleCenter, float radius,
         const FlatVector& polygonCenter, const std::vector<FlatVector>& vertices, FlatVector& contactPoint)
     {
         float minDistance = FlatMath::FloatMax;
@@ -60,7 +60,7 @@ namespace FlatPhysics {
         }
     }
 
-    void FlatCollisions::findCollisionPoint(const FlatVector& centerA, float radiusA,
+    void FlatCollisions::findCirclesContactPoint(const FlatVector& centerA, float radiusA,
         const FlatVector& centerB, FlatVector& closestPoint)
     {
         /*
@@ -89,29 +89,29 @@ namespace FlatPhysics {
         if (shapeA == ShapeType::Circle) {
             if (shapeB == ShapeType::Circle) {
                 // Circle to Circle Collision, Only one contact point
-                findCollisionPoint(bodyA->getPosition(), bodyA->radius, bodyB->getPosition(), contact1);
+                findCirclesContactPoint(bodyA->getPosition(), bodyA->radius, bodyB->getPosition(), contact1);
                 contactCount = 1;
             }
             else if (shapeB == ShapeType::Box) {
-                findCollisionPoint(bodyA->getPosition(), bodyA->radius,
+                findCirclePolygonContactPoint(bodyA->getPosition(), bodyA->radius,
                     bodyB->getPosition(), bodyB->getTransformedVertices(), contact1);
                 contactCount = 1;
             }
         }
         else if (shapeA == ShapeType::Box) {
             if (shapeB == ShapeType::Circle) {
-                findCollisionPoint(bodyB->getPosition(), bodyB->radius,
+                findCirclePolygonContactPoint(bodyB->getPosition(), bodyB->radius,
                     bodyA->getPosition(), bodyA->getTransformedVertices(), contact1);
                 contactCount = 1;
             }
             else if (shapeB == ShapeType::Box) {
-                findCollisionPoints(bodyA->getTransformedVertices(), bodyB->getTransformedVertices(),
+                findPolygonsContactPoints(bodyA->getTransformedVertices(), bodyB->getTransformedVertices(),
                     contact1, contact2, contactCount);
             }
         }
     }
 
-    void FlatCollisions::findCollisionPoints(const std::vector<FlatVector>& verticesA,
+    void FlatCollisions::findPolygonsContactPoints(const std::vector<FlatVector>& verticesA,
         const std::vector<FlatVector>& verticesB, FlatVector& contact1, FlatVector& contact2,
         int& contactCount)
     {
