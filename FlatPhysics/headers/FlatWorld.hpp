@@ -25,6 +25,9 @@ namespace FlatPhysics {
         std::vector<FlatBody*> bodies;
         std::vector<FlatManifold> contactList;
 
+    private:
+        void seperateBodies(FlatBody* bodyA, FlatBody* bodyB, const FlatVector& minimumTranslationVector);
+
     public:
         // Define Constants
         static FlatVector Gravity;

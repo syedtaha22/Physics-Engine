@@ -43,8 +43,8 @@ bool FlatPhysics::FlatWorld::getBody(int index, FlatBody*& body) {
     return false;
 }
 
-void FlatPhysics::FlatWorld::step(float time, size_t iterations) {
-    iterations = FlatMath::Clamp<size_t>(iterations, MinIterations, MaxIterations);
+void FlatPhysics::FlatWorld::step(float time, size_t totalIterations) {
+    totalIterations = FlatMath::Clamp<size_t>(totalIterations, MinIterations, MaxIterations);
 
     // Initilize normal and depth, only once instead of in each loop
     FlatPhysics::FlatVector normal = FlatPhysics::FlatVector::Zero;
@@ -67,10 +67,10 @@ void FlatPhysics::FlatWorld::step(float time, size_t iterations) {
 
 
     FlatWorld::worldStopwatch.start();
-    for (size_t it = 0; it < iterations; it++) {
+    for (size_t currentIteration = 0; currentIteration < totalIterations; currentIteration++) {
         // Move
         for (size_t i = 0; i < bodies.size(); i++) {
-            bodies[i]->step(time / iterations, Gravity);
+            bodies[i]->step(time / totalIterations, Gravity);
         }
 
         // Clear the contact list
@@ -93,31 +93,23 @@ void FlatPhysics::FlatWorld::step(float time, size_t iterations) {
 
 
                 if (FlatCollisions::collides(bodyA, bodyB, normal, depth)) {
-                    if (bodyA->isStatic) bodyB->move(normal * depth); // If body A is static, move body B
-                    else if (bodyB->isStatic) bodyA->move(-normal * depth);// If body B is static, move body A
-                    else { // If both are dynamic, move both
-                        bodyA->move(-normal * (depth / 2.0f));
-                        bodyB->move(normal * (depth / 2.0f));
-                    }
+                    seperateBodies(bodyA, bodyB, normal * depth);
 
                     FlatCollisions::getCollisionPoints(bodyA, bodyB, contact1, contact2, contactCount);
                     contactList.emplace_back(bodyA, bodyB, depth, normal, contact1, contact2, contactCount);
                 }
-
-
             }
-
         }
+
         // Resolve Collisions
         for (size_t i = 0; i < contactList.size(); i++) {
             resolveCollisions(contactList[i]);
 
-            if (contactList[i].contactCount > 0) {
+            if (currentIteration == totalIterations - 1) {
                 // See if the contact1 is already in the list
                 if (std::find(contactPoints.begin(), contactPoints.end(),
                     contactList[i].contact1) == contactPoints.end())
                     contactPoints.push_back(contactList[i].contact1);
-
                 if (contactList[i].contactCount > 1) {
                     // See if the contact2 is already in the list
                     if (std::find(contactPoints.begin(), contactPoints.end(),
@@ -128,6 +120,20 @@ void FlatPhysics::FlatWorld::step(float time, size_t iterations) {
         }
     }
     FlatWorld::worldStopwatch.stop();
+}
+
+void FlatPhysics::FlatWorld::seperateBodies(FlatBody* bodyA, FlatBody* bodyB,
+    const FlatVector& minimumTranslationVector)
+{
+    // If body A is static, move body B
+    if (bodyA->isStatic) bodyB->move(minimumTranslationVector);
+    // If body B is static, move body A
+    else if (bodyB->isStatic) bodyA->move(-minimumTranslationVector);
+    // If both are dynamic, move both
+    else {
+        bodyA->move(-minimumTranslationVector / 2.0f);
+        bodyB->move(minimumTranslationVector / 2.0f);
+    }
 }
 
 void FlatPhysics::FlatWorld::resolveCollisions(const FlatManifold& collisionManifold)
