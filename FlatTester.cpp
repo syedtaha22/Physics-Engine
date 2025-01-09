@@ -80,7 +80,7 @@ public:
 
                 // If the left mouse button is clicked, add a circle
                 if (Flat::Mouse::isLeftButtonClicked()) {
-                    float radius = FlatUtils::Random::randomFloat(0.75f, 1.5f);
+                    float radius = FlatUtils::Random::getRandomFloat(0.75f, 1.5f);
 
                     FlatPhysics::FlatBody* body = nullptr;
 
@@ -89,13 +89,13 @@ public:
                     }
 
                     world.addBody(body);
-                    colors.push_back(FlatUtils::Random::randomColor());
+                    colors.push_back(FlatUtils::Random::getRandomColor());
                     outlineColors.push_back(Flat::Color::White);
                 }
                 // If the Right mouse button is clicked, add a box
                 if (Flat::Mouse::isRightButtonClicked()) {
-                    float width = FlatUtils::Random::randomFloat(1.0f, 2.0f);
-                    float height = FlatUtils::Random::randomFloat(1.0f, 2.0f);
+                    float width = FlatUtils::Random::getRandomFloat(1.0f, 2.0f);
+                    float height = FlatUtils::Random::getRandomFloat(1.0f, 2.0f);
 
                     FlatPhysics::FlatBody* body = nullptr;
 
@@ -104,7 +104,7 @@ public:
                     }
 
                     world.addBody(body);
-                    colors.push_back(FlatUtils::Random::randomColor());
+                    colors.push_back(FlatUtils::Random::getRandomColor());
                     outlineColors.push_back(Flat::Color::White);
                 }
             }
