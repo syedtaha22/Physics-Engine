@@ -7,7 +7,7 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "${workspaceFolder}\\FlatTester.cpp",
+                "${file}",
                 "-o",
                 "${workspaceFolder}\\FlatTester.exe",
                 "-lsfml-graphics",
