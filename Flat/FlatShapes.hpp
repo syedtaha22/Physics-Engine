@@ -1,6 +1,9 @@
 #ifndef FLAT_SHAPES_HPP
 #define FLAT_SHAPES_HPP
 
+#define _USE_MATH_DEFINES
+#include<cmath>
+
 #include <SFML/Graphics.hpp>
 #include "FlatColor.hpp"
 
@@ -36,12 +39,14 @@ namespace Flat {
         sf::RectangleShape shape;
 
         // Constructor now takes width, height, x, y directly
-        Rectangle(float width, float height, float x, float y, Flat::Color borderColor = Flat::Color::Transparent,
-            float borderThickness = 0, Flat::Color fillColor = Flat::Color::Transparent)
+        Rectangle(float width, float height, float angle, sf::Vector2f position,
+            Flat::Color borderColor = Flat::Color::Transparent, float borderThickness = 0,
+            Flat::Color fillColor = Flat::Color::Transparent)
         {
             shape.setSize(sf::Vector2f(width, height));  // Set size using width and height
-            shape.setPosition(x, y);  // Set position using x and y
+            shape.setPosition(position);
             shape.setOrigin(width / 2, height / 2);  // Set origin to the center of the rectangle
+            shape.setRotation(angle * 180.f / M_PI);  // Set rotation
             shape.setFillColor(fillColor.toSFML());
 
             // Set border properties

@@ -128,16 +128,17 @@ namespace Flat {
             draw(circle);
         }
 
-        void drawRectangleWithBorder(float width, float height, sf::Vector2f position, Flat::Color borderColor = Flat::Color::White,
+        void drawRectangleWithBorder(float width, float height, float angle, sf::Vector2f position, Flat::Color borderColor = Flat::Color::White,
             float borderThickness = 0.1f, Flat::Color fillColor = Flat::Color::Transparent)
         {
-            Flat::Rectangle rectangle(width, height, position.x, position.y, borderColor, borderThickness, fillColor);
+            Flat::Rectangle rectangle(width, height, angle, position, borderColor, borderThickness, fillColor);
             draw(rectangle);
         }
 
-        void drawRectangleFilled(float width, float height, sf::Vector2f position, Flat::Color fillColor)
+        void drawRectangleFilled(float width, float height, float angle, sf::Vector2f position, Flat::Color fillColor)
         {
-            Flat::Rectangle rectangle(width, height, position.x, position.y, Flat::Color::Transparent, 0, fillColor);
+            // Use sfml directly instead of Flat::Rectangle
+            Flat::Rectangle rectangle(width, height, angle, position, Flat::Color::Transparent, 0, fillColor);
             draw(rectangle);
         }
 
