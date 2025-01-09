@@ -96,7 +96,7 @@ namespace FlatPhysics {
 
         // Check if two vectors are nearly equal
         static inline bool NearlyEqual(const FlatVector& v1, const FlatVector& v2, float epsilon) {
-            return NearlyEqual(v1.x, v2.x, epsilon) && NearlyEqual(v1.y, v2.y, epsilon);
+            return SquaredDistance(v1, v2) < epsilon * epsilon;
         }
 
     };
