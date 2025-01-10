@@ -1,2 +1,5 @@
 # Ignore exe files
 *.exe
+
+# Ignore test.cpp file
+test.cpp
