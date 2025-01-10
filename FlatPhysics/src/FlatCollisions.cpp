@@ -8,6 +8,7 @@ using std::endl;
 #include "../headers/FlatMath.hpp"
 #include "../headers/FlatBody.hpp"
 #include "../headers/FlatAABB.hpp"
+#include "../headers/FlatContactResolver.hpp"
 
 namespace FlatPhysics {
 
@@ -74,39 +75,39 @@ namespace FlatPhysics {
         closestPoint = centerA + FlatMath::Normalize(centerB - centerA) * radiusA;
     }
 
-    void FlatCollisions::getCollisionPoints(FlatBody*& bodyA, FlatBody*& bodyB,
-        FlatVector& contact1, FlatVector& contact2, int& contactCount)
+    void FlatCollisions::getCollisionPoints(FlatContactResolver& resolver)
     {
         // Initilize contact points
-        contact1 = FlatVector::Zero;
-        contact2 = FlatVector::Zero;
+        resolver.contactList[0] = FlatVector::Zero;
+        resolver.contactList[0] = FlatVector::Zero;
         // Initialize contact count
-        contactCount = 0;
+        resolver.contactCount = 0;
 
-        ShapeType shapeA = bodyA->shapeType;
-        ShapeType shapeB = bodyB->shapeType;
+        ShapeType shapeA = resolver.bodyA->shapeType;
+        ShapeType shapeB = resolver.bodyB->shapeType;
 
         if (shapeA == ShapeType::Circle) {
             if (shapeB == ShapeType::Circle) {
                 // Circle to Circle Collision, Only one contact point
-                findCirclesContactPoint(bodyA->getPosition(), bodyA->radius, bodyB->getPosition(), contact1);
-                contactCount = 1;
+                findCirclesContactPoint(resolver.bodyA->getPosition(), resolver.bodyA->radius,
+                    resolver.bodyB->getPosition(), resolver.contactList[0]);
+                resolver.contactCount = 1;
             }
             else if (shapeB == ShapeType::Box) {
-                findCirclePolygonContactPoint(bodyA->getPosition(), bodyA->radius,
-                    bodyB->getPosition(), bodyB->getTransformedVertices(), contact1);
-                contactCount = 1;
+                findCirclePolygonContactPoint(resolver.bodyA->getPosition(), resolver.bodyA->radius,
+                    resolver.bodyB->getPosition(), resolver.bodyB->getTransformedVertices(), resolver.contactList[0]);
+                resolver.contactCount = 1;
             }
         }
         else if (shapeA == ShapeType::Box) {
             if (shapeB == ShapeType::Circle) {
-                findCirclePolygonContactPoint(bodyB->getPosition(), bodyB->radius,
-                    bodyA->getPosition(), bodyA->getTransformedVertices(), contact1);
-                contactCount = 1;
+                findCirclePolygonContactPoint(resolver.bodyB->getPosition(), resolver.bodyB->radius,
+                    resolver.bodyA->getPosition(), resolver.bodyA->getTransformedVertices(), resolver.contactList[0]);
+                resolver.contactCount = 1;
             }
             else if (shapeB == ShapeType::Box) {
-                findPolygonsContactPoints(bodyA->getTransformedVertices(), bodyB->getTransformedVertices(),
-                    contact1, contact2, contactCount);
+                findPolygonsContactPoints(resolver.bodyA->getTransformedVertices(), resolver.bodyB->getTransformedVertices(),
+                    resolver.contactList[0], resolver.contactList[1], resolver.contactCount);
             }
         }
     }
@@ -317,7 +318,7 @@ namespace FlatPhysics {
             edge = FlatMath::EdgeBetween(verticesA[i], verticesA[(i + 1) % verticesA.size()]);
 
             // Get the axis perpendicular to the edge in normalised space
-            axis = FlatMath::Normalize(FlatVector(-edge.y, edge.x));
+            axis = FlatMath::Normalize(FlatMath::Perpendicular(edge));
 
             // Project the vertices of both bodies onto the axis
             ProjectVertices(verticesA, axis, MinA, MaxA);
@@ -342,7 +343,7 @@ namespace FlatPhysics {
             edge = FlatMath::EdgeBetween(verticesB[i], verticesB[(i + 1) % verticesB.size()]);
 
             // Get the axis perpendicular to the edge in normalised space
-            axis = FlatMath::Normalize(FlatVector(-edge.y, edge.x));
+            axis = FlatMath::Normalize(FlatMath::Perpendicular(edge));
 
             // Project the vertices of both bodies onto the axis
             ProjectVertices(verticesA, axis, MinA, MaxA);
@@ -398,7 +399,7 @@ namespace FlatPhysics {
             edge = FlatMath::EdgeBetween(vertices[i], vertices[(i + 1) % vertices.size()]);
 
             // Get the axis perpendicular to the edge in normalised space
-            axis = FlatMath::Normalize(FlatVector(-edge.y, edge.x));
+            axis = FlatMath::Normalize(FlatMath::Perpendicular(edge));
 
             // Project the vertices of the polygon onto the axis
             ProjectVertices(vertices, axis, MinA, MaxA);
