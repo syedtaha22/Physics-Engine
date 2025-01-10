@@ -8,25 +8,35 @@
 #define FLAT_WORLD_HPP
 
 #include <vector>
+// include pairs
+#include <utility>
 #include "../../FlatUtils/StopWatch.hpp"
-#include "FlatManifold.hpp"
+#include "FlatContactResolver.hpp"
 
 
 namespace FlatPhysics {
 
-    // Forward Declaration of FlatBody, FlatVector, and FlatManifold
+    // Forward Declaration of FlatBody, FlatVector, and FlatContactResolver
     class FlatBody;
     struct FlatVector;
-    struct FlatManifold;
+    struct FlatContactResolver;
 
 
 
     class FlatWorld {
         std::vector<FlatBody*> bodies;
-        std::vector<FlatManifold> contactList;
+        std::vector<std::pair<int, int>> potentialCollisions;
 
     private:
         void seperateBodies(FlatBody* bodyA, FlatBody* bodyB, const FlatVector& minimumTranslationVector);
+
+        void stepBodies(float time, size_t totalIterations);
+        void findPotentialCollisions();
+        void resolvePotentialCollisions();
+
+        void resolveCollisionsBasic(const FlatContactResolver& resolver);
+        void resolveCollisionsWithRotation(FlatContactResolver& resolver);
+
 
     public:
         // Define Constants
@@ -43,7 +53,6 @@ namespace FlatPhysics {
 
         // For Testing
         static FlatUtils::Stopwatch worldStopwatch;
-        std::vector<FlatVector> contactPoints;
 
 
         // Constructor
@@ -57,9 +66,6 @@ namespace FlatPhysics {
         bool getBody(int index, FlatBody*& body);
 
         void step(float time, size_t iterations = MinIterations);
-
-        void resolveCollisions(const FlatManifold& collisionManifold);
-
         size_t numBodies() const;
 
         void clear();
