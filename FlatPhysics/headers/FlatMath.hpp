@@ -99,6 +99,11 @@ namespace FlatPhysics {
             return SquaredDistance(v1, v2) < epsilon * epsilon;
         }
 
+        // Get the perpendicular vector
+        static inline FlatVector Perpendicular(const FlatVector& v) {
+            return FlatVector(-v.y, v.x);
+        }
+
     };
 } // namespace FlatPhysics
 
