@@ -15,6 +15,7 @@ namespace FlatPhysics {
     struct FlatVector;
     struct FlatAABB;
     class FlatBody;
+    struct FlatContactResolver;
 
 
     class FlatCollisions {
@@ -78,8 +79,7 @@ namespace FlatPhysics {
 
         static bool collides(FlatBody*& bodyA, FlatBody*& bodyB, FlatVector& normal, float& depth);
 
-        static void getCollisionPoints(FlatBody*& bodyA, FlatBody*& bodyB,
-            FlatVector& contact1, FlatVector& contact2, int& contactCount);
+        static void getCollisionPoints(FlatContactResolver& resolver);
 
         // Check Collisions between Axis Aligned Bounding Boxes
         static bool AABB_AABB_Collision(const FlatAABB& a, const FlatAABB& b);
