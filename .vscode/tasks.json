@@ -20,7 +20,7 @@
                 "${workspaceFolder}/FlatPhysics/src/FlatVector.cpp",
                 "${workspaceFolder}/FlatPhysics/src/FlatWorld.cpp",
                 "${workspaceFolder}/FlatPhysics/src/FlatAABB.cpp",
-                "${workspaceFolder}/FlatPhysics/src/FlatManifold.cpp",
+                "${workspaceFolder}/FlatPhysics/src/FlatContactResolver.cpp",
                 "-O3"
             ],
             "options": {
