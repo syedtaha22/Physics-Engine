@@ -56,6 +56,12 @@ namespace Flat {
         static const Color Orange;
         static const Color Transparent;
 
+        // Dark Colors
+        static const Color DarkRed;
+        static const Color DarkGreen;
+        static const Color DarkBlue;
+
+
         // Conversion to SFML Color
         sf::Color toSFML() const {
             return sf::Color(r, g, b, a);
@@ -71,6 +77,11 @@ namespace Flat {
     const Color Color::Yellow = Color(255, 255, 0);
     const Color Color::Orange = Color(255, 165, 0);
     const Color Color::Transparent = Color(0, 0, 0, 0);
+
+    // Dark Colors
+    const Color Color::DarkRed = Color(139, 0, 0);
+    const Color Color::DarkGreen = Color(0, 100, 0);
+    const Color Color::DarkBlue = Color(0, 0, 139);
 
     // Overloading the << operator for debugging
     inline std::ostream& operator<<(std::ostream& os, const Color& color) {
