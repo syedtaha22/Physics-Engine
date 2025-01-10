@@ -26,7 +26,6 @@ namespace FlatPhysics {
         FlatVector force;
 
         float angle;
-        float angularVelocity;
 
         std::vector<FlatVector> vertices;
         std::vector<FlatVector> tranformedVertices;
@@ -53,6 +52,7 @@ namespace FlatPhysics {
         float const inverseInertia;
 
         FlatVector linearVelocity;
+        float angularVelocity;
 
     private:
         // Private constructor
