@@ -29,33 +29,10 @@ class Game {
     std::string worldStepTimeString = "";
 
 public:
-    Game() : window(1280, 768, "Physics Engine from Scratch", Flat::Color("#333333"), 5.0f, 32) {
+    Game() : window(1280, 768, "Physics Engine from Scratch", Flat::Color::Black, 5.0f, 32) {
         initGround();
 
-        FlatPhysics::FlatBody* ledge = nullptr;
-
-        // Add a ledge body
-        if (!FlatPhysics::FlatBody::createBoxBody(20.0f, 2.0f, 1.0f, true, 0.5f, ledge)) {
-            throw std::runtime_error("Error creating ledge body");
-        }
-
-        // Rotate the ledge
-        ledge->rotate(-M_PI / 20.0f);
-        ledge->moveTo(FlatPhysics::FlatVector(-15.0f, 5.0f));
-        world.addBody(ledge);
-        entities.emplace_back(ledge, Flat::Color::Blue);
-
-
-        // Add a ledge body
-        if (!FlatPhysics::FlatBody::createBoxBody(20.0f, 2.0f, 1.0f, true, 0.5f, ledge)) {
-            throw std::runtime_error("Error creating ledge body");
-        }
-
-        // Rotate the ledge
-        ledge->rotate(M_PI / 20.0f);
-        ledge->moveTo(FlatPhysics::FlatVector(13.0f, 10.0f));
-        world.addBody(ledge);
-        entities.emplace_back(ledge, Flat::Color::Blue);
+        initLedges();
 
         // Start the stopwatch
         sampleTimer.start();
@@ -77,8 +54,35 @@ public:
         body->moveTo(FlatPhysics::FlatVector(0.0f, -10.f));
         // Add the body to the world
         world.addBody(body);
-        entities.emplace_back(body, Flat::Color::Green);
+        entities.emplace_back(body, Flat::Color::DarkGreen);
 
+    }
+
+    void initLedges() {
+        FlatPhysics::FlatBody* ledge = nullptr;
+
+        // Add a ledge body
+        if (!FlatPhysics::FlatBody::createBoxBody(20.0f, 2.0f, 1.0f, true, 0.5f, ledge)) {
+            throw std::runtime_error("Error creating ledge body");
+        }
+
+        // Rotate the ledge
+        ledge->rotate(-M_PI / 20.0f);
+        ledge->moveTo(FlatPhysics::FlatVector(-15.0f, 5.0f));
+        world.addBody(ledge);
+        entities.emplace_back(ledge, Flat::Color::DarkBlue);
+
+
+        // Add a ledge body
+        if (!FlatPhysics::FlatBody::createBoxBody(20.0f, 2.0f, 1.0f, true, 0.5f, ledge)) {
+            throw std::runtime_error("Error creating ledge body");
+        }
+
+        // Rotate the ledge
+        ledge->rotate(M_PI / 20.0f);
+        ledge->moveTo(FlatPhysics::FlatVector(13.0f, 10.0f));
+        world.addBody(ledge);
+        entities.emplace_back(ledge, Flat::Color::DarkBlue);
     }
 
     void addRandomBodyOfType(FlatPhysics::ShapeType type, FlatPhysics::FlatVector position) {
@@ -190,21 +194,10 @@ public:
 
     void draw() {
         window.clear();
-        window.drawGridLines(1.0f, 0.1f, Flat::Color(255, 255, 255, 50));
+        window.drawGridLines(1.0f, Flat::Color("#333333"));
 
-        for (size_t i = 0; i < world.numBodies(); i++) {
-            entities[i].draw(window);
-        }
-
-
-        // Loop over the contact points
-        for (const FlatPhysics::FlatVector& contact : world.contactPoints) {
-            window.drawCircleFilled(0.1f,
-                FlatPhysics::FlatConverter::toVector2f(contact), Flat::Color::Red);
-        }
-
+        for (size_t i = 0; i < world.numBodies(); i++)  entities[i].draw(window);
         displayStats();
-
         window.display();
     }
 
