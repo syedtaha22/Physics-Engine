@@ -154,9 +154,8 @@ namespace Flat {
             draw(polygon);
         }
 
-        void drawLine(sf::Vector2f point1, sf::Vector2f point2, float thickness,
-            Flat::Color color = Flat::Color::White) {
-            Flat::Line line(point1, point2, thickness, color);
+        void drawLine(sf::Vector2f point1, sf::Vector2f point2, Flat::Color color = Flat::Color::White) {
+            Flat::Line line(point1, point2, color);
             draw(line);
         }
 
@@ -232,7 +231,7 @@ namespace Flat {
             lastFrameTime = clock.getElapsedTime().asSeconds(); // Update last frame time
         }
 
-        void drawGridLines(float gridSize = 1.0f, float lineThickness = 0.1f, Flat::Color color = Flat::Color::White) {
+        void drawGridLines(float gridSize = 1.0f, Flat::Color color = Flat::Color::White) {
             // Get the current camera's extent (the visible area in the world coordinates)
             float left, right, top, bottom;
             getCameraExtent(left, right, top, bottom);
@@ -240,11 +239,11 @@ namespace Flat {
             // Draw vertical grid lines
             for (float x = 0; x <= right; x += gridSize) {
                 // Draws the y axis, and positive x axis
-                drawLine(sf::Vector2f(x, top), sf::Vector2f(x, bottom), lineThickness, color);
+                drawLine(sf::Vector2f(x, top), sf::Vector2f(x, bottom), color);
 
                 if (x != 0) {
                     // Draws the negative x axis
-                    drawLine(sf::Vector2f(-x, top), sf::Vector2f(-x, bottom), lineThickness, color);
+                    drawLine(sf::Vector2f(-x, top), sf::Vector2f(-x, bottom), color);
                 }
 
             }
@@ -252,11 +251,11 @@ namespace Flat {
             // Draw horizontal grid lines
             for (float y = 0; y <= top; y += gridSize) {
                 // Draws the x axis, and positive y axis
-                drawLine(sf::Vector2f(left, y), sf::Vector2f(right, y), lineThickness, color);
+                drawLine(sf::Vector2f(left, y), sf::Vector2f(right, y), color);
 
                 if (y != 0) {
                     // Draws the negative y axis
-                    drawLine(sf::Vector2f(left, -y), sf::Vector2f(right, -y), lineThickness, color);
+                    drawLine(sf::Vector2f(left, -y), sf::Vector2f(right, -y), color);
                 }
 
             }

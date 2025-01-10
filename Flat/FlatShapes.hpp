@@ -137,7 +137,7 @@ namespace Flat {
         sf::VertexArray shape;
 
         // Constructor now takes two points directly
-        Line(const sf::Vector2f& p1, const sf::Vector2f& p2, float thickness, Flat::Color color) {
+        Line(const sf::Vector2f& p1, const sf::Vector2f& p2, Flat::Color color) {
             shape.setPrimitiveType(sf::Lines);
             shape.resize(2);
             shape[0].position = p1;
