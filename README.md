@@ -37,7 +37,7 @@ Contains the physics engine, focusing on collision detection, vector math, bodie
   <br>
   
   - `FlatAABB`: Represents an Axis-Aligned Bounding Box (AABB) for objects
-  - `FlatManifold`: Represents the contact points and data related to collisions between bodies.
+  - `FlatContactResolver`: Holds information about contacts between bodies.
   - `FlatTransformation`: Implements transformations such as translation, rotation, and scaling for physical bodies.
   - `FlatVector`: Defines a 2D vector with x and y components and provides overloaded operators for vector operations.
 
