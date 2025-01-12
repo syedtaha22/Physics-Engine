@@ -79,7 +79,7 @@ public:
             body->setKinematicProperty("LinearVelocity", Math::Vector(vx, vy));
 
             world.addBody(body); // Add body to the world
-            colors.push_back(Utils::Random::getRandomColor()); // Add a random color
+            colors.push_back(Utils::Random::Color()); // Add a random color
         }
     }
 

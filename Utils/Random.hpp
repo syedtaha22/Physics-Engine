@@ -17,25 +17,25 @@ namespace Utils {
         static std::mt19937 randomEngine;
 
         // Random Float
-        static float getRandomFloat(float min, float max) {
+        static float Float(float min, float max) {
             std::uniform_real_distribution<float> dist(min, max);
             return dist(randomEngine);
         }
 
         // Random Int
-        static int getRandomInt(int min, int max) {
+        static int Int(int min, int max) {
             std::uniform_int_distribution<int> dist(min, max);
             return dist(randomEngine);
         }
 
         // Random Bool
-        static bool getRandomBool() {
-            return getRandomInt(0, 1) == 1;
+        static bool Bool() {
+            return Int(0, 1) == 1;
         }
 
         // Random Color
-        static Flat::Color getRandomColor() {
-            return Flat::Color(getRandomInt(0, 255), getRandomInt(0, 255), getRandomInt(0, 255));
+        static Flat::Color Color() {
+            return Flat::Color(Int(0, 255), Int(0, 255), Int(0, 255));
         }
     };
 
