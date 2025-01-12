@@ -37,6 +37,8 @@ namespace Physics {
         static std::shared_ptr<Body> CreateRectangularBody(double width, double height, double mass,
             const Math::Vector& position);
 
+        static std::shared_ptr<Body> AstronomicalBody(double mass, const Math::Vector& position);
+
 
         void setPhysicalProperty(const std::string& property, float value);
         // void addPhysicalProperty(const std::string& property, float value);

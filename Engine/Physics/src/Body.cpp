@@ -34,7 +34,6 @@ namespace Physics {
             physicalProperties["Width"] = width;
             physicalProperties["Height"] = height;
         }
-        else throw std::runtime_error("Invalid Dimensions");
 
         // Add Physical Properties
         physicalProperties["Mass"] = mass;
@@ -127,6 +126,10 @@ namespace Physics {
     // double Body::getAngle() const {
     //     return angle;
     // }
+
+    std::shared_ptr<Body> Body::AstronomicalBody(double mass, const Math::Vector& position) {
+        return std::make_shared<Body>(0, 0, 0, mass, position);
+    }
 
 
     // User side functions to create a Circle body
