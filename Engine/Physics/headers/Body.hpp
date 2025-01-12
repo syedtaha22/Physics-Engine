@@ -50,6 +50,7 @@ namespace Physics {
         Math::Vector getKinematicProperty(const std::string& property) const;
         bool kinematicPropertyExists(const std::string& property) const;
 
+        void step(double time);
     };
 } // namespace Physics
 
