@@ -53,6 +53,10 @@ namespace Physics {
         physicalProperties[property] = value;
     }
 
+    void Body::addPhysicalProperty(const std::string& property, double value) {
+        physicalProperties[property] += value;
+    }
+
     // Check if Physical Property exists
     bool Body::physicalPropertyExists(const std::string& property) const {
         return physicalProperties.find(property) != physicalProperties.end();
@@ -71,6 +75,12 @@ namespace Physics {
         kinematicProperties[property] = value;
     }
 
+    void Body::addKinematicProperty(const std::string& property, const Math::Vector& value) {
+        kinematicProperties[property] += value;
+    }
+
+
+
     // Check if Kinematic Property exists
     bool Body::kinematicPropertyExists(const std::string& property) const {
         return kinematicProperties.find(property) != kinematicProperties.end();
@@ -83,9 +93,6 @@ namespace Physics {
         }
         throw std::runtime_error("Property \"" + property + "\" does not exist");
     }
-
-
-
 
     // std::vector<int> Body::createBoxTriangles() {
     //     std::vector<int> triangles(6);
@@ -100,11 +107,11 @@ namespace Physics {
     // }
 
     // Function to get the vertices from the width and height
-    // std::vector<FlatVector> Body::createVertices(float& width, float& height) {
-    //     float left = -width / 2;
-    //     float right = left + width;
-    //     float bottom = -height / 2;
-    //     float top = bottom + height;
+    // std::vector<FlatVector> Body::createVertices(double& width, double& height) {
+    //     double left = -width / 2;
+    //     double right = left + width;
+    //     double bottom = -height / 2;
+    //     double top = bottom + height;
 
     //     std::vector<FlatVector> vertices(4);
     //     vertices[0] = FlatVector(left, top);

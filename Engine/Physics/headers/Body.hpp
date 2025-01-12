@@ -40,13 +40,13 @@ namespace Physics {
         static std::shared_ptr<Body> AstronomicalBody(double mass, const Math::Vector& position);
 
 
-        void setPhysicalProperty(const std::string& property, float value);
-        // void addPhysicalProperty(const std::string& property, float value);
-        float getPhysicalProperty(const std::string& property) const;
+        void setPhysicalProperty(const std::string& property, double value);
+        void addPhysicalProperty(const std::string& property, double value);
+        double getPhysicalProperty(const std::string& property) const;
         bool physicalPropertyExists(const std::string& property) const;
 
         void setKinematicProperty(const std::string& property, const Math::Vector& value);
-        // void addKinematicProperty(const std::string& property, const Math::Vector& value);
+        void addKinematicProperty(const std::string& property, const Math::Vector& value);
         Math::Vector getKinematicProperty(const std::string& property) const;
         bool kinematicPropertyExists(const std::string& property) const;
 
