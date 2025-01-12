@@ -160,9 +160,10 @@ namespace Flat {
         }
 
         void writeText(const std::string& text, sf::Vector2f position, Flat::Color color = Flat::Color::White,
-            int size = 24, bool setOriginToCenter = true)
+            int size = 24, bool setOriginToCenter = true, float scale = -1.0f)
         {
             Flat::Text textObj(text, position, color, size, setOriginToCenter);
+            if (scale > 0) textObj.setScale(scale);
             draw(textObj);
         }
 
@@ -262,6 +263,11 @@ namespace Flat {
 
             // Draw the origin point (center of the window)
             drawCircleFilled(0.1f, sf::Vector2f(0.0f, 0.0f), Flat::Color::Red);
+        }
+
+        // Get zoom level
+        float getZoomLevel() {
+            return zoomLevel;
         }
 
         ~Window() {
