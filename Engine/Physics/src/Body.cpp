@@ -21,7 +21,7 @@
 namespace Physics {
 
 
-    Body::Body(float radius, float width, float height, float mass, const Math::Vector& position)
+    Body::Body(double radius, double width, double height, double mass, const Math::Vector& position)
     {
 
         // Add Kinematic Properties
@@ -50,7 +50,7 @@ namespace Physics {
     }
 
     // Set Physical Property
-    void Body::setPhysicalProperty(const std::string& property, float value) {
+    void Body::setPhysicalProperty(const std::string& property, double value) {
         physicalProperties[property] = value;
     }
 
@@ -60,7 +60,7 @@ namespace Physics {
     }
 
     // Get Physical Property
-    float Body::getPhysicalProperty(const std::string& property) const {
+    double Body::getPhysicalProperty(const std::string& property) const {
         if (physicalPropertyExists(property)) {
             return physicalProperties.at(property);
         }
@@ -124,13 +124,13 @@ namespace Physics {
     //     return position;
     // }
 
-    // float Body::getAngle() const {
+    // double Body::getAngle() const {
     //     return angle;
     // }
 
 
     // User side functions to create a Circle body
-    std::shared_ptr<Body> Body::CreateCircularBody(float radius, float mass, const Math::Vector& position)
+    std::shared_ptr<Body> Body::CreateCircularBody(double radius, double mass, const Math::Vector& position)
     {
         if (radius <= 0.0f) throw std::runtime_error("Radius must be greater than 0");
         if (mass <= 0.0f) throw std::runtime_error("Mass must be greater than 0");
@@ -140,7 +140,7 @@ namespace Physics {
     }
 
     // User side functions to create a Box body
-    std::shared_ptr<Body> Body::CreateRectangularBody(float width, float height, float mass, const Math::Vector& position)
+    std::shared_ptr<Body> Body::CreateRectangularBody(double width, double height, double mass, const Math::Vector& position)
     {
         if (width <= 0.0f || height <= 0.0f) throw std::runtime_error("Width and Height must be greater than 0");
         if (mass <= 0.0f) throw std::runtime_error("Mass must be greater than 0");
@@ -159,7 +159,7 @@ namespace Physics {
     //     transformedUpdateRequired = true;
     // }
 
-    // void Body::rotate(float amount) {
+    // void Body::rotate(double amount) {
     //     angle += amount;
     //     transformedUpdateRequired = true;
     // }
@@ -203,10 +203,10 @@ namespace Physics {
     // }
 
     // FlatAABB Body::getAABB() {
-    //     float minX = FlatMath::FloatMax;
-    //     float minY = FlatMath::FloatMax;
-    //     float maxX = FlatMath::FloatMin;
-    //     float maxY = FlatMath::FloatMin;
+    //     double minX = FlatMath::FloatMax;
+    //     double minY = FlatMath::FloatMax;
+    //     double maxX = FlatMath::FloatMin;
+    //     double maxY = FlatMath::FloatMin;
 
     //     if (shapeType == ShapeType::Circle) {
     //         minX = position.x - radius;

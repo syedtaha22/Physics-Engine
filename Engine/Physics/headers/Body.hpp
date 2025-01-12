@@ -22,7 +22,7 @@ namespace Physics {
     class Body {
 
         // Physical Properties
-        std::unordered_map<std::string, float> physicalProperties;
+        std::unordered_map<std::string, double> physicalProperties;
 
         // Kinematic Properties
         std::unordered_map<std::string, Math::Vector> kinematicProperties;
@@ -31,10 +31,10 @@ namespace Physics {
 
     public:
 
-        Body(float radius, float height, float width, float mass, const Math::Vector& position);
+        Body(double radius, double height, double width, double mass, const Math::Vector& position);
 
-        static std::shared_ptr<Body> CreateCircularBody(float radius, float mass, const Math::Vector& position);
-        static std::shared_ptr<Body> CreateRectangularBody(float width, float height, float mass,
+        static std::shared_ptr<Body> CreateCircularBody(double radius, double mass, const Math::Vector& position);
+        static std::shared_ptr<Body> CreateRectangularBody(double width, double height, double mass,
             const Math::Vector& position);
 
 
