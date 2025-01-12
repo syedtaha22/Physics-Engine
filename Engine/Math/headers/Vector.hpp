@@ -10,25 +10,25 @@ namespace Math {
     struct Transformation;
 
     struct Vector {
-        float x, y;
+        double x, y;
 
         // Define zero vector
         static Vector Zero;
 
-        Vector(float x = 0.0f, float y = 0.0f);
+        Vector(double x = 0.0f, double y = 0.0f);
 
 
         Vector operator+(const Vector& other) const; // Addition
         Vector operator-(const Vector& other) const; // Subtraction
-        Vector operator*(float scalar) const; // Multiplication
-        Vector operator/(float scalar) const; // Division
+        Vector operator*(double scalar) const; // Multiplication
+        Vector operator/(double scalar) const; // Division
 
-        friend Vector operator*(float scalar, const Vector& vector); // Multiplication
+        friend Vector operator*(double scalar, const Vector& vector); // Multiplication
 
         Vector& operator+=(const Vector& other); // In-place addition
         Vector& operator-=(const Vector& other); // In-place subtraction
-        Vector& operator*=(float scalar); // In-place multiplication
-        Vector& operator/=(float scalar); // In-place division
+        Vector& operator*=(double scalar); // In-place multiplication
+        Vector& operator/=(double scalar); // In-place division
 
         Vector operator-() const; // Negation
         bool operator==(const Vector& other) const; // Check for equality
@@ -36,6 +36,9 @@ namespace Math {
 
         // Static function to transform a vector
         static Vector Transform(const Vector& vector, Transformation& transform);
+
+        // hash function
+        size_t hash() const;
 
 
     };
