@@ -85,7 +85,6 @@ namespace Flat {
             this->borderThickness = borderThickness;
             this->borderColor = borderColor;
 
-
             applyBorder();  // Apply border during construction
         }
 
@@ -198,6 +197,10 @@ namespace Flat {
             }
 
             text.setPosition(position);
+        }
+
+        void setScale(float scale) {
+            text.setScale(scale / pixelPerMeter, -scale / pixelPerMeter);
         }
 
         sf::Drawable& getShape() override {
