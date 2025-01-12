@@ -10,7 +10,7 @@
 #include <random>
 #include "../Flat/FlatColor.hpp"
 
-namespace FlatUtils {
+namespace Utils {
     class Random {
     public:
         // Random Number Generator
@@ -41,6 +41,6 @@ namespace FlatUtils {
 
     std::mt19937 Random::randomEngine(std::random_device{}());
 
-} // namespace FlatUtils
+} // namespace Utils
 
 #endif // RANDOM_HPP

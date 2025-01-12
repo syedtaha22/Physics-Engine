@@ -11,7 +11,7 @@
 #include <chrono>
 #include <thread>
 
-namespace FlatUtils {
+namespace Utils {
 
 
     class Stopwatch {
@@ -72,14 +72,7 @@ namespace FlatUtils {
 
 
 
-} // namespace FlatUtils
-
-
-
-
-
-
-
+} // namespace Utils
 
 
 #endif // STOPWATCH_HPP
