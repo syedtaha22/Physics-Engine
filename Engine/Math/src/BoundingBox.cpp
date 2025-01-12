@@ -6,7 +6,7 @@ namespace Math {
 
     BoundingBox::BoundingBox(Vector* min, Vector* max) : min(min), max(max) {}
 
-    BoundingBox::BoundingBox(float minX, float minY, float maxX, float maxY) {
+    BoundingBox::BoundingBox(double minX, double minY, double maxX, double maxY) {
         min = new Vector(minX, minY);
         max = new Vector(maxX, maxY);
     }

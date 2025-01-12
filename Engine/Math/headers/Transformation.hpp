@@ -7,17 +7,17 @@ namespace Math {
     struct Vector;
 
     struct Transformation {
-        const float PositionX;
-        const float PositionY;
-        const float sine;
-        const float cosine;
+        const double PositionX;
+        const double PositionY;
+        const double sine;
+        const double cosine;
 
         // Static Zero transformation
         static const Transformation Zero;
 
-        Transformation(const Vector& position, float angle);
+        Transformation(const Vector& position, double angle);
 
-        Transformation(float x, float y, float angle);
+        Transformation(double x, double y, double angle);
     };
 
 

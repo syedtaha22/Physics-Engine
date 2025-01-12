@@ -8,8 +8,8 @@ using std::sqrt;
 
 namespace Math {
     Vector Operation::ArtimeticMean(const std::vector<Vector>& vertices) {
-        float sumX = 0.0f;
-        float sumY = 0.0f;
+        double sumX = 0.0f;
+        double sumY = 0.0f;
         for (int i = 0; i < vertices.size(); i++) {
             sumX += vertices[i].x;
             sumY += vertices[i].y;

@@ -9,16 +9,16 @@ namespace Math {
 
     class Converter {
     private:
-        static float scale; // Scale factor for conversions
+        static double scale; // Scale factor for conversions
 
     public:
         // Set the scale factor
-        static inline void setScale(float newScale) {
+        static inline void setScale(double newScale) {
             scale = newScale;
         }
 
         // Get the current scale factor
-        static inline float getScale() {
+        static inline double getScale() {
             return scale;
         }
 

@@ -13,7 +13,7 @@ namespace Math {
 
         BoundingBox(Vector* min, Vector* max);
 
-        BoundingBox(float minX, float minY, float maxX, float maxY);
+        BoundingBox(double minX, double minY, double maxX, double maxY);
 
         ~BoundingBox();
 

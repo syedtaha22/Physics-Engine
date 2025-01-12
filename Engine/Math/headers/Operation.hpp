@@ -21,37 +21,37 @@ namespace Math {
 
     public:
 
-        static constexpr float FloatMax = 3.4028235e+38F; // Maximum value of a float
-        static constexpr float FloatMin = -3.4028235e+38F; // Minimum value of a float
+        static constexpr double DoubleMax = 1.797693e308;
+        static constexpr double DoubleMin = -1.797693e308;
 
         // Dot Product
-        static inline float DotProduct(const Vector& v1, const Vector& v2) {
+        static inline double DotProduct(const Vector& v1, const Vector& v2) {
             return v1.x * v2.x + v1.y * v2.y;
         }
 
         // Cross Product
-        static inline float CrossProduct(const Vector& v1, const Vector& v2) {
+        static inline double CrossProduct(const Vector& v1, const Vector& v2) {
             return v1.x * v2.y - v1.y * v2.x;
         }
 
         // Lenght of a vector
-        static inline float Length(const Vector& v) {
+        static inline double Length(const Vector& v) {
             return sqrt(v.x * v.x + v.y * v.y);
         }
 
         // Normalize a vector
         static inline Vector Normalize(const Vector& v) {
-            float len = Length(v);
+            double len = Length(v);
             return Vector(v.x / len, v.y / len);
         }
 
         // Distance between two points
-        static inline float Distance(const Vector& v1, const Vector& v2) {
+        static inline double Distance(const Vector& v1, const Vector& v2) {
             return Length(v1 - v2);
         }
 
         // Squared Distance between two points
-        static inline float SquaredDistance(const Vector& v1, const Vector& v2) {
+        static inline double SquaredDistance(const Vector& v1, const Vector& v2) {
             return (v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y);
         }
 
@@ -75,8 +75,8 @@ namespace Math {
         }
 
         // Round a number
-        static inline float Round(float number, size_t decimalPlaces) {
-            float factor = static_cast<float>(std::pow(10, decimalPlaces));
+        static inline double Round(double number, size_t decimalPlaces) {
+            double factor = static_cast<double>(std::pow(10, decimalPlaces));
             return std::round(std::trunc(number * factor)) / factor;
         }
 
@@ -88,12 +88,12 @@ namespace Math {
         }
 
 
-        static inline bool NearlyEqual(float a, float b, float epsilon) {
+        static inline bool NearlyEqual(double a, double b, double epsilon) {
             return std::abs(a - b) < epsilon;
         }
 
         // Check if two vectors are nearly equal
-        static inline bool NearlyEqual(const Vector& v1, const Vector& v2, float epsilon) {
+        static inline bool NearlyEqual(const Vector& v1, const Vector& v2, double epsilon) {
             return SquaredDistance(v1, v2) < epsilon * epsilon;
         }
 
