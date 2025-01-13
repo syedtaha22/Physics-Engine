@@ -1,5 +1,5 @@
-#ifndef CONSTANTS_HPP
-#define CONSTANTS_HPP
+#ifndef PHYSICS_CONSTANTS_HPP
+#define PHYSICS_CONSTANTS_HPP
 
 
 namespace Physics {
@@ -18,4 +18,4 @@ namespace Physics {
     };
 }
 
-#endif // CONSTANTS_HPP
+#endif // PHYSICS_CONSTANTS_HPP
