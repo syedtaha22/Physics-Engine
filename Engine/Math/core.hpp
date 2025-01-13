@@ -7,6 +7,7 @@
 #include "headers/BoundingBox.hpp"
 #include "headers/Operation.hpp"
 #include "headers/Converter.hpp"
+#include "headers/Constants.hpp"
 
 
 #endif // MATH_CORE_HPP
