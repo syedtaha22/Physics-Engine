@@ -12,8 +12,6 @@ namespace Physics {
     class World {
         std::vector<std::shared_ptr<Body>> bodies;
 
-        static constexpr double G = 6.67430e-11f;
-
     private:
         void calculateGravitionalForce(std::shared_ptr<Body> body1, std::shared_ptr<Body> body2);
 
