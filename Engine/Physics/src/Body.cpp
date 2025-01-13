@@ -173,19 +173,11 @@ namespace Physics {
     // }
 
     void Body::step(double time) {
-
-        // Calculate acceleration
-        kinematicProperties["Acceleration"] = kinematicProperties["GForce"] * physicalProperties["InverseMass"];
-
         // Update linear velocity
         kinematicProperties["LinearVelocity"] += kinematicProperties["Acceleration"] * time;
 
         // Update position
         kinematicProperties["Position"] += kinematicProperties["LinearVelocity"] * time;
-
-        // Reset the GForce
-        kinematicProperties["GForce"] = Math::Vector(0, 0);
-
     }
 
     // void Body::step(double time, const FlatVector& gravity) {
