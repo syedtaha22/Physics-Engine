@@ -21,9 +21,6 @@ namespace Math {
 
     public:
 
-        static constexpr double DoubleMax = 1.797693e308;
-        static constexpr double DoubleMin = -1.797693e308;
-
         // Dot Product
         static inline double DotProduct(const Vector& v1, const Vector& v2) {
             return v1.x * v2.x + v1.y * v2.y;
