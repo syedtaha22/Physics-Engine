@@ -4,12 +4,7 @@
 #include <sstream>
 #include <iomanip>
 #include <unordered_map>
-
-#define _USE_MATH_DEFINES
-#include <cmath>
-
-
-const double G = 6.67430e-11; // Gravitational constant
+#include <fstream>
 
 // Include Flat Core
 #include "Flat/core.hpp"
@@ -23,11 +18,7 @@ const double G = 6.67430e-11; // Gravitational constant
 #include "Utils/StopWatch.hpp" // Include stopwatch utility
 #include "Utils/Random.hpp" // Include random utility
 
-
-constexpr double RADIUS = 1e10; // Radius of the circle
-constexpr double MASS = 5e23; // Mass of each body
-
-class Game {
+class Simulation {
     Flat::Window window;
 
     Physics::World world;
@@ -42,45 +33,78 @@ class Game {
     std::vector<Physics::Path> orbits;
 
 public:
-    Game() : window(1280, 768, "Physics Engine from Scratch", Flat::Color::Black, 5.0f, 32) {
+    Simulation() : window(1280, 768, "Physics Engine from Scratch", Flat::Color::Black, 5.0f, 32) {
         // Use ostringstream to convert the double to a string in scientific notation
         std::ostringstream oss;
         oss << std::scientific << std::setprecision(0) << Math::Converter::getScale();
 
         scaleText = "Scale: " + oss.str();
 
+        // 
+        addBodiesFromCSV("Simulations/solar-system.csv");
 
-        // Add a Sun-Like Body
-        world.addBody(Physics::Body::AstronomicalBody(5e26, Math::Vector(0, 0)));
-        colors.push_back(Flat::Color::Yellow);
+        // Add colors for the bodies
+        /*
+            Sun: 255, 204, 102
+            Mercury: 169, 169, 169
+            Venus: 240, 234, 214
+            Earth: 70, 130, 180
+            Mars: 210, 105, 30
+            Jupiter: 188, 143, 143
+            Saturn: 210, 180, 140
+            Uranus: 173, 216, 230
+            Neptune: 0, 0, 139
 
-        // Add an Earth-Like Body
-        add_bodies_around_circle(4, RADIUS, MASS);
+        */
+        colors.push_back(Flat::Color(255, 204, 102)); // Sun
+        colors.push_back(Flat::Color(169, 169, 169)); // Mercury
+        colors.push_back(Flat::Color(240, 234, 214)); // Venus
+        colors.push_back(Flat::Color(70, 130, 180)); // Earth
+        colors.push_back(Flat::Color(210, 105, 30)); // Mars
+        colors.push_back(Flat::Color(188, 143, 143)); // Jupiter
+        colors.push_back(Flat::Color(210, 180, 140)); // Saturn
+        colors.push_back(Flat::Color(173, 216, 230)); // Uranus
+        colors.push_back(Flat::Color(0, 0, 139)); // Neptune
+
         orbits.resize(world.numBodies());
     }
 
-    // Function to add bodies around a circle
-    void add_bodies_around_circle(int n, double radius, double mass) {
-        // Get the mass of the central body
-        double central_mass = world.getBody(0)->getPhysicalProperty("Mass");
 
-        // Calculate the escape velocity just once
-        double escape_velocity = sqrt(2 * G * central_mass / radius);
-
-        for (int i = 0; i < n; ++i) {
-            double angle = 2 * M_PI * i / n; // Angle for equidistant placement
-            double x = radius * cos(angle); // X position
-            double y = radius * sin(angle); // Y position
-
-            double vx = -sin(angle) * (sqrt(G * 5e24 / radius)) * 5; // Tangential velocity (Vx)
-            double vy = cos(angle) * (sqrt(G * 5e24 / radius)) * 5; // Tangential velocity (Vy)
-
-            std::shared_ptr<Physics::Body> body = Physics::Body::AstronomicalBody(mass, Math::Vector(x, y));
-            body->setKinematicProperty("LinearVelocity", Math::Vector(vx, vy));
-
-            world.addBody(body); // Add body to the world
-            colors.push_back(Utils::Random::Color()); // Add a random color
+    // Main function to read CSV and populate bodies
+    void addBodiesFromCSV(const std::string& filename) {
+        std::ifstream file(filename);
+        if (!file.is_open()) {
+            std::cerr << "Error: Unable to open file " << filename << std::endl;
+            return;
         }
+
+        std::string line;
+        // Skip the header row
+        std::getline(file, line);
+
+        while (std::getline(file, line)) {
+            std::stringstream ss(line);
+            std::string bodyName;
+            double mass, distance, velocityY;
+            char comma;
+
+            // Read the CSV row
+            std::getline(ss, bodyName, ',');
+            ss >> mass >> comma >> distance >> comma >> velocityY;
+
+            // Create position vector (distance along x-axis)
+            Math::Vector position(distance, 0.0);
+
+            // Create velocity vector (tangential velocity along y-axis)
+            Math::Vector velocity(0.0, velocityY);
+
+            // Add the body and apply velocity
+            std::shared_ptr<Physics::Body> body = Physics::Body::AstronomicalBody(mass, position);
+            body->setKinematicProperty("LinearVelocity", velocity);
+            world.addBody(body);
+        }
+
+        file.close();
     }
 
     void update() {
@@ -113,7 +137,7 @@ public:
 
         // stopwatch.start();
         if (started) {
-            world.step(window.getElapsedTimeSinceLastFrame(Flat::TimeUnit::Seconds) * 1e6);
+            world.step(window.getElapsedTimeSinceLastFrame(Flat::TimeUnit::Seconds) * 1e7);
         }
         // // stopwatch.stop();
 
@@ -206,15 +230,10 @@ public:
                 Flat::Color::White, 1, false, 0.7f);
 
         }
-
-
-
         float bottom = window.getCameraBottom();
-
 
         window.writeText(scaleText, sf::Vector2f(left + padding, bottom + padding),
             Flat::Color::White, 1, false, 0.7f);
-
     }
 
     bool isOpen() {
@@ -224,16 +243,15 @@ public:
 };
 
 int main() {
-    Math::Converter::setScale(1e9f);
+    Math::Converter::setScale(1e11f);
 
-    Game game;
+    Simulation simulation;
 
     // Set Conversion Scale
 
-    while (game.isOpen()) {
-
-        game.update();
-        game.draw();
+    while (simulation.isOpen()) {
+        simulation.update();
+        simulation.draw();
     }
 
 }
