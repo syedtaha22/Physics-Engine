@@ -13,7 +13,7 @@ namespace Physics {
         std::vector<std::shared_ptr<Body>> bodies;
 
     private:
-        void calculateGravitionalForce(std::shared_ptr<Body> body1, std::shared_ptr<Body> body2);
+        void calculateBodyAccelerations();
 
     public:
         void addBody(std::shared_ptr<Body> body);
@@ -24,20 +24,8 @@ namespace Physics {
 
         void step(double time);
 
-        void calculateGForces();
-
-
-
-
-
-
     };
 
 } // namespace Physics
-
-
-
-
-
 
 #endif // WORLD_HPP
