@@ -1,0 +1,4 @@
+mass,distanceX,distanceY,velocityX,velocityY
+2e30,0,0,0,0
+6e24,1.5e11,0,0,30000
+6e13,9.0e10,5e10,100,1000

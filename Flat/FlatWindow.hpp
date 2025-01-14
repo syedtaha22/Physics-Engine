@@ -163,9 +163,10 @@ namespace Flat {
         }
 
         void writeText(const std::string& text, const sf::Vector2f& position,
-            Flat::Color color = Flat::Color::White, int size = 24, bool setOriginToCenter = true)
+            Flat::Color color = Flat::Color::White, int size = 24, bool setOriginToCenter = true, float scale = -1.0f)
         {
             Flat::Text textObj(text, position, color, size, setOriginToCenter);
+            if (scale > 0) textObj.setScale(scale);
             draw(textObj);
         }
 

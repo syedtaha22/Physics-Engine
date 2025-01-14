@@ -46,6 +46,10 @@ namespace Flat {
             }
         }
 
+        Color withAlha(unsigned char alpha) const {
+            return Color(r, g, b, alpha);
+        }
+
         // Predefined Colors
         static const Color Red;
         static const Color Green;

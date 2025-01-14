@@ -13,15 +13,14 @@
                 "-lsfml-graphics",
                 "-lsfml-window",
                 "-lsfml-system",
-                "${workspaceFolder}/FlatPhysics/src/FlatBody.cpp",
-                "${workspaceFolder}/FlatPhysics/src/FlatCollisions.cpp",
-                "${workspaceFolder}/FlatPhysics/src/FlatMath.cpp",
-                "${workspaceFolder}/FlatPhysics/src/FlatTransformation.cpp",
-                "${workspaceFolder}/FlatPhysics/src/FlatVector.cpp",
-                "${workspaceFolder}/FlatPhysics/src/FlatWorld.cpp",
-                "${workspaceFolder}/FlatPhysics/src/FlatAABB.cpp",
-                "${workspaceFolder}/FlatPhysics/src/FlatContactResolver.cpp",
-                "-O3"
+                "${workspaceFolder}/Engine/Physics/src/Body.cpp",
+                "${workspaceFolder}/Engine/Physics/src/World.cpp",
+                "${workspaceFolder}/Engine/Physics/src/Path.cpp",
+                "${workspaceFolder}/Engine/Math/src/Operation.cpp",
+                "${workspaceFolder}/Engine/Math/src/Transformation.cpp",
+                "${workspaceFolder}/Engine/Math/src/Vector.cpp",
+                "${workspaceFolder}/Engine/Math/src/BoundingBox.cpp",
+                "${workspaceFolder}/Engine/Math/src/Converter.cpp",
             ],
             "options": {
                 "cwd": "${fileDirname}"
