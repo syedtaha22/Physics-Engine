@@ -3,6 +3,7 @@
 #include "../headers/World.hpp"
 #include "../headers/Body.hpp"
 #include "../headers/Constants.hpp"
+#include "../headers/Property.hpp"
 
 #include "../../Math/headers/Operation.hpp"
 #include "../../Math/headers/Vector.hpp"
@@ -25,7 +26,7 @@ namespace Physics {
         if (index >= 0 && index < bodies.size()) {
             return bodies[index];
         }
-        return nullptr;
+        throw std::out_of_range("Index out of range");
     }
 
     size_t World::numBodies() const {
@@ -40,43 +41,27 @@ namespace Physics {
     }
 
     void World::calculateBodyAccelerations() {
-        /*
-            Calculate the Gravitational Acceleration acting on each body
-
-            From Newton's Law of Universal Gravitation:
-            F = G * (m1 * m2) / r^2
-                => F = m1 * a1
-            m1 * a1 = G * (m1 * m2) / r^2
-
-            => a1 = G * m2 / r^2
-
-            Where:
-                G = Gravitational Constant
-                a1 = Acceleration acting on the first body due to the second body
-                m2 = Mass of the second body
-                r = Distance between the two bodies
-
-            For the direction of the acceleration, calculate the unit vector in the direction
-            of the second body from the first body and multiply it by the magnitude of the acceleration
-        */
         for (size_t i = 0; i < bodies.size(); i++) {
-            bodies[i]->setKinematicProperty("Acceleration", Math::Vector::Zero);
-            Math::Vector position = bodies[i]->getKinematicProperty("Position");
+            bodies[i]->setKinematicProperty(KinematicProperty::Acceleration, Math::Vector::Zero);
+
+            Math::Vector position =
+                bodies[i]->getKinematicProperty(KinematicProperty::Position);
 
             for (size_t j = 0; j < bodies.size(); j++) {
                 if (i == j) continue;
 
-                Math::Vector direction = bodies[j]->getKinematicProperty("Position") - position;
+                Math::Vector direction =
+                    bodies[j]->getKinematicProperty(KinematicProperty::Position) - position;
 
                 double distance = Math::Operation::Length(direction);
                 direction = direction / distance;
 
-                double mass = bodies[j]->getPhysicalProperty("Mass");
+                double mass = bodies[j]->getPhysicalProperty(PhysicalProperty::Mass);
 
                 double accelerationMagnitude = Constants::GRAVITATIONAL_CONSTANT * mass / (distance * distance);
                 Math::Vector acceleration = direction * accelerationMagnitude;
 
-                bodies[i]->addKinematicProperty("Acceleration", acceleration);
+                bodies[i]->addKinematicProperty(KinematicProperty::Acceleration, acceleration);
             }
         }
     }

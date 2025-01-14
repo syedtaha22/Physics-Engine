@@ -4,7 +4,6 @@
 #include <vector>
 #include <memory>
 
-
 namespace Physics {
 
     class Body;
@@ -22,7 +21,7 @@ namespace Physics {
 
         size_t numBodies() const;
 
-        void step(double time);
+        void step(double time); // Orbit Mechanics
 
     };
 
