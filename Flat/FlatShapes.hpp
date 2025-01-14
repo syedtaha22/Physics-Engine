@@ -39,7 +39,7 @@ namespace Flat {
         sf::RectangleShape shape;
 
         // Constructor now takes width, height, x, y directly
-        Rectangle(float width, float height, float angle, sf::Vector2f position,
+        Rectangle(float width, float height, float angle, const sf::Vector2f& position,
             Flat::Color borderColor = Flat::Color::Transparent, float borderThickness = 0,
             Flat::Color fillColor = Flat::Color::Transparent)
         {

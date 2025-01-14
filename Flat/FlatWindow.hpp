@@ -113,54 +113,57 @@ namespace Flat {
             window.draw(shape.getShape());
         }
 
-        void drawCircleWithBorder(float radius, sf::Vector2f position, Flat::Color borderColor = Flat::Color::Transparent,
-            float borderThickness = 0, Flat::Color fillColor = Flat::Color::Transparent)
+        void drawCircleWithBorder(float radius, const sf::Vector2f& position,
+            Flat::Color borderColor = Flat::Color::Transparent, float borderThickness = 0,
+            Flat::Color fillColor = Flat::Color::Transparent)
         {
 
             Flat::Circle circle(radius, position.x, position.y, borderColor, borderThickness, fillColor);
             draw(circle);
         }
 
-        void drawCircleFilled(float radius, sf::Vector2f position, Flat::Color fillColor)
+        void drawCircleFilled(float radius, const sf::Vector2f& position, Flat::Color fillColor)
         {
 
             Flat::Circle circle(radius, position.x, position.y, Flat::Color::Transparent, 0, fillColor);
             draw(circle);
         }
 
-        void drawRectangleWithBorder(float width, float height, float angle, sf::Vector2f position, Flat::Color borderColor = Flat::Color::White,
+        void drawRectangleWithBorder(float width, float height, float angle, const sf::Vector2f& position,
+            Flat::Color borderColor = Flat::Color::White,
             float borderThickness = 0.1f, Flat::Color fillColor = Flat::Color::Transparent)
         {
             Flat::Rectangle rectangle(width, height, angle, position, borderColor, borderThickness, fillColor);
             draw(rectangle);
         }
 
-        void drawRectangleFilled(float width, float height, float angle, sf::Vector2f position, Flat::Color fillColor)
+        void drawRectangleFilled(float width, float height, float angle, const sf::Vector2f& position, Flat::Color fillColor)
         {
             // Use sfml directly instead of Flat::Rectangle
             Flat::Rectangle rectangle(width, height, angle, position, Flat::Color::Transparent, 0, fillColor);
             draw(rectangle);
         }
 
-        void drawPolygonWithBorder(std::vector<sf::Vector2f> vertices, Flat::Color borderColor = Flat::Color::Transparent,
+        void drawPolygonWithBorder(const std::vector<sf::Vector2f>& vertices,
+            Flat::Color borderColor = Flat::Color::Transparent,
             float borderThickness = 0, Flat::Color fillColor = Flat::Color::Transparent)
         {
             Flat::Polygon polygon(vertices, borderColor, borderThickness, fillColor);
             draw(polygon);
         }
 
-        void drawPolygonFilled(std::vector<sf::Vector2f> vertices, Flat::Color color) {
+        void drawPolygonFilled(const std::vector<sf::Vector2f>& vertices, Flat::Color color) {
             Flat::Polygon polygon(vertices, Flat::Color::Transparent, 0, color);
             draw(polygon);
         }
 
-        void drawLine(sf::Vector2f point1, sf::Vector2f point2, Flat::Color color = Flat::Color::White) {
+        void drawLine(const sf::Vector2f& point1, const sf::Vector2f& point2, Flat::Color color = Flat::Color::White) {
             Flat::Line line(point1, point2, color);
             draw(line);
         }
 
-        void writeText(const std::string& text, sf::Vector2f position, Flat::Color color = Flat::Color::White,
-            int size = 24, bool setOriginToCenter = true, float scale = -1.0f)
+        void writeText(const std::string& text, const sf::Vector2f& position,
+            Flat::Color color = Flat::Color::White, int size = 24, bool setOriginToCenter = true, float scale = -1.0f)
         {
             Flat::Text textObj(text, position, color, size, setOriginToCenter);
             if (scale > 0) textObj.setScale(scale);
