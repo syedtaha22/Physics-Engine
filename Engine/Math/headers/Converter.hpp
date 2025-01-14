@@ -38,12 +38,12 @@ namespace Math {
         }
 
         // Convert sf::Vector2f to Vector (multiply by scale for world units)
-        static inline Vector toFlatVector(const sf::Vector2f& v) {
+        static inline Vector toVector(const sf::Vector2f& v) {
             return Vector(v.x * scale, v.y * scale);
         }
 
         // Convert sf::Vector2i to Vector (multiply by scale for world units)
-        static inline Vector toFlatVector(const sf::Vector2i& v) {
+        static inline Vector toVector(const sf::Vector2i& v) {
             return Vector(v.x * scale, v.y * scale);
         }
 
