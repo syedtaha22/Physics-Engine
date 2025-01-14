@@ -3,9 +3,9 @@
 int main() {
     Utils::Simulation simulation;
 
-    simulation.loadBodiesFromCSV("data/sims/3_body_problem.csv");
+    simulation.loadBodiesFromCSV("data/sims/solar-system.csv");
 
-    simulation.setSpeed(6);
+    simulation.setSpeed(7);
 
     while (simulation.isOpen()) {
         simulation.update();
