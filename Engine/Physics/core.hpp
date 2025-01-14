@@ -6,6 +6,7 @@
 #include "headers/World.hpp"
 #include "headers/Path.hpp"
 #include "headers/Constants.hpp"
+#include "headers/Property.hpp"
 
 
 #endif // PHYSICS_CORE_HPP
