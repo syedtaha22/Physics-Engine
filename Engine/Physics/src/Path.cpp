@@ -5,7 +5,6 @@
 
 namespace Physics {
 
-
     void Path::insert(const Math::Vector& v) {
         size_t hash = v.hash();
 
@@ -27,4 +26,4 @@ namespace Physics {
     size_t Path::getSize() const {
         return hashList.size();
     }
-};
+} // namespace Physics

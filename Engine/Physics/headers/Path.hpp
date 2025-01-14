@@ -26,7 +26,7 @@ namespace Physics {
         size_t getSize() const;
     };
 
-};
+} // namespace Physics
 
 
 
