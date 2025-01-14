@@ -1,5 +1,2 @@
 # Ignore exe files
 *.exe
-
-# Ignore Legacy folder
-Legacy/
