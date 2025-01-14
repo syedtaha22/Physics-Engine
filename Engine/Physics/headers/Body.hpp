@@ -1,10 +1,3 @@
-/*
-
-    Represent a body in the simulation. The body will have properties defined by the user.
-    I'll use an unordered map to store the properties of the body.
-
-*/
-
 #ifndef BODY_HPP
 #define BODY_HPP
 
@@ -19,39 +12,41 @@ namespace Math {
 
 namespace Physics {
 
+    // Forward Declaration 
+    enum class PhysicalProperty;
+    enum class KinematicProperty;
+
     class Body {
 
         // Physical Properties
-        std::unordered_map<std::string, double> physicalProperties;
+        std::unordered_map<PhysicalProperty, double> physicalProperties;
 
         // Kinematic Properties
-        std::unordered_map<std::string, Math::Vector> kinematicProperties;
-
-        std::unordered_map<std::string, bool> booleanProperties;
+        std::unordered_map<KinematicProperty, Math::Vector> kinematicProperties;
 
     public:
+        Body(double mass, const Math::Vector& position);
 
-        Body(double radius, double height, double width, double mass, const Math::Vector& position);
+        // Setters
+        void setPhysicalProperty(PhysicalProperty property, double value);
+        void setKinematicProperty(KinematicProperty property, const Math::Vector& value);
 
-        static std::shared_ptr<Body> CreateCircularBody(double radius, double mass, const Math::Vector& position);
-        static std::shared_ptr<Body> CreateRectangularBody(double width, double height, double mass,
-            const Math::Vector& position);
+        // Adders
+        void addPhysicalProperty(PhysicalProperty property, double value);
+        void addKinematicProperty(KinematicProperty property, const Math::Vector& value);
 
-        static std::shared_ptr<Body> AstronomicalBody(double mass, const Math::Vector& position);
+        // Getters
+        double getPhysicalProperty(PhysicalProperty property) const;
+        Math::Vector getKinematicProperty(KinematicProperty property) const;
 
+        // Existence Checkers
+        bool physicalPropertyExists(PhysicalProperty property) const;
+        bool kinematicPropertyExists(KinematicProperty property) const;
 
-        void setPhysicalProperty(const std::string& property, double value);
-        void addPhysicalProperty(const std::string& property, double value);
-        double getPhysicalProperty(const std::string& property) const;
-        bool physicalPropertyExists(const std::string& property) const;
-
-        void setKinematicProperty(const std::string& property, const Math::Vector& value);
-        void addKinematicProperty(const std::string& property, const Math::Vector& value);
-        Math::Vector getKinematicProperty(const std::string& property) const;
-        bool kinematicPropertyExists(const std::string& property) const;
-
+        // Step the body
         void step(double time);
     };
+
 } // namespace Physics
 
 
