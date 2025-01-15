@@ -9,7 +9,7 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${workspaceFolder}\\FlatTester.exe",
+                "${workspaceFolder}\\${fileBasenameNoExtension}.exe",
                 "-lsfml-graphics",
                 "-lsfml-window",
                 "-lsfml-system",
