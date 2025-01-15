@@ -3,7 +3,7 @@
 int main() {
     Utils::Simulation simulation;
 
-    simulation.initSimulation("data/sims/solar-system.csv");
+    simulation.init("data/sims/solar-system.csv");
 
     simulation.setSpeed(7);
 

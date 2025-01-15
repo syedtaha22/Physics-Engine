@@ -151,7 +151,7 @@ namespace Utils {
          * @brief Initializes the simulation with celestial bodies from a CSV file.
          * @param filename Path to the CSV file.
          */
-        void initSimulation(const std::string& filename) {
+        void init(const std::string& filename) {
             double maxDistance = loadBodiesFromCSV(filename); // Load celestial bodies from CSV file
 
             // Get the order of magnitude of the maximum distance
