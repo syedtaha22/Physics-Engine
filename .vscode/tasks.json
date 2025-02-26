@@ -13,14 +13,8 @@
                 "-lsfml-graphics",
                 "-lsfml-window",
                 "-lsfml-system",
-                "${workspaceFolder}/Engine/Physics/src/Body.cpp",
-                "${workspaceFolder}/Engine/Physics/src/World.cpp",
-                "${workspaceFolder}/Engine/Physics/src/Path.cpp",
-                "${workspaceFolder}/Engine/Math/src/Operation.cpp",
-                "${workspaceFolder}/Engine/Math/src/Transformation.cpp",
-                "${workspaceFolder}/Engine/Math/src/Vector.cpp",
-                "${workspaceFolder}/Engine/Math/src/BoundingBox.cpp",
-                "${workspaceFolder}/Engine/Math/src/Converter.cpp",
+                "${workspaceFolder}/Engine/Physics/src/*",
+                "${workspaceFolder}/Engine/Math/src/*"
             ],
             "options": {
                 "cwd": "${fileDirname}"
