@@ -1,8 +1,7 @@
 #ifndef PATH_HPP
 #define PATH_HPP
 
-#include <vector>
-#include <unordered_map>
+#include <array>
 
 namespace Math {
     struct Vector;
@@ -10,25 +9,47 @@ namespace Math {
 
 namespace Physics {
 
+    template <std::size_t Capacity=5000>
     class Path {
     private:
-        std::vector<size_t> hashList;  // List of hashes for the order of insertion
-        std::unordered_map<size_t, Math::Vector> hashToVector;  // Map from hash to vector
+        std::array<Math::Vector, Capacity> buffer{};
+        std::size_t head = 0;   // Next write position
+        std::size_t size = 0;   // Number of valid points
 
     public:
-        // Insert a Position
-        void insert(const Math::Vector& v);
+        Path() = default;
 
-        // Get the i-th position in the path
-        Math::Vector get(int i) const;
+        // Insert newest point (overwrites oldest when full)
+        inline void insert(const Math::Vector& v) {
+            buffer[head] = v;
+            head = (head + 1) % Capacity;
+            if (size < Capacity) ++size;
+        }
 
-        // Get the size of the path
-        size_t getSize() const;
+        // Access i-th element (0 = oldest, size-1 = newest)
+        inline const Math::Vector& get(std::size_t i) const {
+            std::size_t index = (head + Capacity - size + i) % Capacity;
+            return buffer[index];
+        }
+
+        inline std::size_t getSize() const {
+            return size;
+        }
+
+        inline constexpr std::size_t getCapacity() const {
+            return Capacity;
+        }
+
+        inline bool isFull() const {
+            return size == Capacity;
+        }
+
+        inline void clear() {
+            head = 0;
+            size = 0;
+        }
     };
 
 } // namespace Physics
-
-
-
 
 #endif // PATH_HPP

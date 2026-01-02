@@ -28,7 +28,7 @@ namespace Utils {
         std::string scaleText; // Text to display scale information
         bool started = false; // Flag to toggle simulation start/stop
         bool showGrid = true; // Flag to toggle grid display
-        std::vector<Physics::Path> orbits; // Stores the paths (orbits) of celestial bodies
+        std::vector<Physics::Path<500>> orbits; // Stores the paths (orbits) of celestial bodies
         double speedFactor; // Speed factor for simulation
 
     private:
